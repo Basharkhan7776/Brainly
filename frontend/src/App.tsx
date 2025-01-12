@@ -1,25 +1,17 @@
-import { Button } from "./components/Button";
-import { Card } from "./components/Card";
-import {Plusicon} from "./icons/Plusicon";
-import {Shareicon} from "./icons/Shareicon"
-
+import { Signin } from "./pages/Signin";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Signup } from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
-    <div>
-      <Button
-        varient="primary"
-        text="Add contant"
-        startIcon={<Plusicon/>}
-      ></Button>
-      <Button
-        varient="secondary"
-        text="Share Brain"
-        startIcon={<Shareicon/>}
-      ></Button>
-      <Card type="twitter" link="https://x.com/mannupaaji/status/1878076302218912176" title="First Post"/>
-      <Card type="youtube" link="https://youtu.be/Ue5bOpVswIo?si=lJ8PFUQ-ystsPA8l" title="Second onew"/>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/signup" element={<Signup />}></Route>
+        <Route path="/signin" element={<Signin />}></Route>
+        <Route path="/dashboard" element={<Dashboard />}></Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
