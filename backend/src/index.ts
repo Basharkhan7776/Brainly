@@ -5,6 +5,8 @@ import { ContentModel, LinkModel, UserModel } from "./db";
 import { JWT_PASSWORD } from "./config";
 import { userMiddleware } from "./middleware";
 import cors from "cors";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 app.use(express.json());

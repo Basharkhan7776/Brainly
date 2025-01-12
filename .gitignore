@@ -1,0 +1,23 @@
+# Ignore .env files
+.env
+.env.local
+.env.development
+.env.production
+
+# Ignore node_modules directories
+node_modules/
+
+# Ignore build directories
+dist/
+build/
+
+# Ignore IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.log
+*.DS_Store
+
+# Ignore TypeScript build info files
+*.tsbuildinfo

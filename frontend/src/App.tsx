@@ -18,7 +18,7 @@ function App() {
         startIcon={<Shareicon/>}
       ></Button>
       <Card type="twitter" link="https://x.com/mannupaaji/status/1878076302218912176" title="First Post"/>
-      <Card type="youtube" link="https://youtu.be/Ue5bOpVswIo?si=lJ8PFUQ-ystsPA8l" title="Second one"/>
+      <Card type="youtube" link="https://youtu.be/Ue5bOpVswIo?si=lJ8PFUQ-ystsPA8l" title="Second onew"/>
     </div>
   );
 }

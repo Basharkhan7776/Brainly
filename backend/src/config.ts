@@ -1,1 +1,1 @@
-export const JWT_PASSWORD = "!23123";
+export const JWT_PASSWORD = process.env.JWT_PASSWORD as string;
