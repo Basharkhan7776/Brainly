@@ -19,22 +19,25 @@ function Dashboard() {
             setModelOpen(false);
           }}
         />
-        <div className="flex justify-end gap-4">
-          <Button
-            varient="primary"
-            text="Add contant"
-            startIcon={<Plusicon />}
-            onClick={() => {
-              setModelOpen(true);
-            }}
-          ></Button>
-          <Button
-            varient="secondary"
-            text="Share Brain"
-            startIcon={<Shareicon />}
-          ></Button>
+        <div className="flex justify-between mb-8 items-center">
+          <div className="text-4xl ml-4 font-semibold itm">All Notes</div>
+          <div className="flex justify-end gap-4">
+            <Button
+              varient="primary"
+              text="Add contant"
+              startIcon={<Plusicon />}
+              onClick={() => {
+                setModelOpen(true);
+              }}
+            ></Button>
+            <Button
+              varient="secondary"
+              text="Share Brain"
+              startIcon={<Shareicon />}
+            ></Button>
+          </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Card
             type="twitter"
             link="https://x.com/mannupaaji/status/1878076302218912176"
