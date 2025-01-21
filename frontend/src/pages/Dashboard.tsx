@@ -12,7 +12,7 @@ import { dash } from '../atoms';
 
 
 
-function Dashboard() {
+export function Dashboard() {
   const [modelOpen, setModelOpen] = useState(false);
   const setDash = useSetRecoilState(dash);
   const dashValue = useRecoilValue(dash);
@@ -28,14 +28,16 @@ function Dashboard() {
           }}
         />
         <div className="flex justify-between items-center mb-4">
-          <div
-            onClick={() => {
-              setDash(true);
-            }}
-            className={`cursor-pointer hover:text-purple-600 transition-all duration-200 ${(dashValue?"hidden":"block")}`} >
-            <Opendashboard />
+          <div className="flex text-4xl font-semibold justify-center items-center transition-all duration-200">
+            <div
+              onClick={() => {
+                setDash(true);
+              }}
+              className={`cursor-pointer hover:text-purple-600 mr-12 ${(dashValue ? "hidden" : "block")}`} >
+              <Opendashboard />
+            </div>
+            All Notes
           </div>
-          <div className="flex text-4xl font-semibold justify-center items-center transition-all duration-200">All Notes</div>
           <div className="flex justify-end gap-4">
             <Button
               varient="primary"
@@ -52,7 +54,7 @@ function Dashboard() {
             ></Button>
           </div>
         </div>
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-8 flex-wrap">
           <Card
             type="twitter"
             link="https://x.com/mannupaaji/status/1878076302218912176"
@@ -62,6 +64,11 @@ function Dashboard() {
             type="youtube"
             link="https://youtu.be/Ue5bOpVswIo?si=lJ8PFUQ-ystsPA8l"
             title="Second One"
+          />
+          <Card
+            type="link"
+            link="https://difficult-hosta-226.notion.site/11-Building-a-second-brain-app-16e4681ba151808e982ccc7f73fc7b48"
+            title="Third One"
           />
         </div>
       </div>

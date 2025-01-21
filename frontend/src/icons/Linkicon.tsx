@@ -1,4 +1,4 @@
-export function Linkicon() {
+export function Linkicon({ size }: { size: number }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -6,7 +6,7 @@ export function Linkicon() {
       viewBox="0 0 24 24"
       stroke-width="2.1"
       stroke="currentColor"
-      className="size-8"
+      className={`size-${size}`}
     >
       <path
         stroke-linecap="round"

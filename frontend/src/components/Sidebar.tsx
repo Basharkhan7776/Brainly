@@ -31,7 +31,7 @@ export function Sidebar() {
         <Sidebaritem text="Twitter" icon={<Twittericon size={35} />} />
         <Sidebaritem text="Youtube" icon={<Youtubeicon size={40} />} />
         <Sidebaritem text="Documents" icon={<Docicon />} />
-        <Sidebaritem text="Link" icon={<Linkicon />} />
+        <Sidebaritem text="Link" icon={<Linkicon size={8}/>} />
         <Sidebaritem text="Tags" icon={<Tagicon />} />
       </div>
     </div>

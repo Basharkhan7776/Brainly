@@ -16,7 +16,7 @@ interface cardProps {
 const frontIcons={
   "twitter": <Twittericon size={25}/>,
   "youtube": <Youtubeicon size={30}/>,
-  "link": <Linkicon />,
+  "link": <Linkicon size={6}/>,
   "docs": <Docicon />,
 }
 
@@ -33,9 +33,10 @@ export function Card({ title, link, type }: cardProps) {
           <div className="text-gray-500 hover:text-black hover:bg-gray-100 rounded-md p-1 transition-all duration-200 cursor-pointer">{<Deleteicon/>}</div>
         </div>
       </div>
-      <div className="pt-4 flex cursor-pointer">
-        {type == "youtube" && <YouTubeEmbed url={link} height={170}/>}
+      <div className="pt-4 flex cursor-pointer text-lg justify-center">
+        {type == "youtube" && <YouTubeEmbed url={link} width={300}/>}
         {type == "twitter" && <TwitterEmbed url={link} />}
+        {type == "link" && <a className="text-purple-600 underline decoration-dotted underline-offset-8 hover:text-gray-500 transition-all duration-200" href={link}>{link}</a>}
       </div>
     </div>
   );
