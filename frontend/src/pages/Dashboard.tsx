@@ -46,11 +46,13 @@ export function Dashboard() {
               onClick={() => {
                 setModelOpen(true);
               }}
+              animate={true}
             ></Button>
             <Button
               varient="secondary"
               text="Share Brain"
               startIcon={<Shareicon />}
+              animate={true}
             ></Button>
           </div>
         </div>
