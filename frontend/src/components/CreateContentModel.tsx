@@ -1,4 +1,4 @@
-import { Crossicon } from "./../icons/Crossicon";
+import { Crossicon } from "../icons/Crossicon";
 import { Button } from "./Button";
 import { Input } from "./Input";
 

@@ -2,10 +2,10 @@ import { YouTubeEmbed } from "react-social-media-embed";
 import { TwitterEmbed } from "react-social-media-embed";
 import { Shareicon } from "../icons/Shareicon";
 import { Deleteicon } from "../icons/Deleteicon";
-import { Twittericon } from "./../icons/Twittericon";
-import { Youtubeicon } from "./../icons/Youtubeicon";
-import { Linkicon } from "./../icons/Linkicon";
-import { Docicon } from "./../icons/Docicon";
+import { Twittericon } from "../icons/Twittericon";
+import { Youtubeicon } from "../icons/Youtubeicon";
+import { Linkicon } from "../icons/Linkicon";
+import { Docicon } from "../icons/Docicon";
 
 interface cardProps {
   title: string;
@@ -14,8 +14,8 @@ interface cardProps {
 }
 
 const frontIcons={
-  "twitter": <Twittericon />,
-  "youtube": <Youtubeicon />,
+  "twitter": <Twittericon size={25}/>,
+  "youtube": <Youtubeicon size={30}/>,
   "link": <Linkicon />,
   "docs": <Docicon />,
 }

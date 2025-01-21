@@ -1,11 +1,11 @@
-export function Youtubeicon() {
+export function Youtubeicon({size}:{size:number}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       x="0px"
       y="0px"
-      width="40"
-      height="40"
+      width={size}
+      height={size}
       viewBox="0 0 50 50"
       stroke="currentColor"
     >
