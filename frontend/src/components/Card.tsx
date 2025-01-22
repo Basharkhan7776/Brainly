@@ -37,15 +37,15 @@ export function Card({ title, link, type, description }: cardProps) {
       <div className="pt-4 flex cursor-pointer text-lg justify-center">
         {type == "youtube" && <YouTubeEmbed url={link} width={300} />}
         {type == "twitter" && <TwitterEmbed url={link} />}
-        {type == "link" && <Link link={link} des/>}
-        {type == "docs" && <p> jenwfonwenfwn</p>}
+        {type == "link" && <Link link={link} description={description}/>}
+        {type == "docs" && <p>{description}</p>}
       </div>
     </div>
   );
 }
 
 
-function Link({link, description}: {link: string, description: string}) {
+function Link({link, description}: {link: string, description?: string}) {
   return (
     <div className="flex justify-center">
       <a className="text-purple-600 underline decoration-dotted underline-offset-8 hover:text-gray-500 transition-all duration-200" href={link}>{link}</a>
