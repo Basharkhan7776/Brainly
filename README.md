@@ -58,11 +58,11 @@ Open your web browser to access the application. Go to mention the port number t
 
 ### Home Page
 
-![Home Page](./Screenshorts/Home.png)
+![Home Page](./assets/screenshots/Home.png)
 
 ### Dashboard
 
-![Dashboard](./Screenshorts/DashBoard.png)
+![Dashboard](./assets/screenshots/DashBoard.png)
 
 
 **Technologies Used**
