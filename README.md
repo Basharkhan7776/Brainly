@@ -1,4 +1,4 @@
-**Brainly README**
+**Brainly**
 =====================
 
 **Project Overview**
