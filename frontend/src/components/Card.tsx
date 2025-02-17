@@ -18,7 +18,7 @@ const frontIcons = {
   "twitter": <Twittericon size={25} />,
   "youtube": <Youtubeicon size={30} />,
   "link": <Linkicon size={6} />,
-  "docs": <Docicon />,
+  "docs": <Docicon size={8}/>,
 }
 
 export function Card({ title, link, type, description }: cardProps) {

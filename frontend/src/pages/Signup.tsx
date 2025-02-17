@@ -21,8 +21,8 @@ export function Signup() {
   }
   return (
     <div className="h-screen w-screen bg-gray-200 flex justify-center items-center">
-      <div className="bg-white rounded-lg border min-w-48 p-4">
-        <div className="my-4 ml-12 flex text-2xl font-semibold items-center cursor-default">
+      <div className="flex flex-col justify-center items-center gap-2 bg-white rounded-lg border h-96 px-12">
+        <div className="flex text-2xl font-semibold items-center cursor-default">
           <div className="mr-4 text-purple-600">
             <Logo />
           </div>
@@ -30,7 +30,8 @@ export function Signup() {
         </div>
         <Input placeHolder="Username" ref={usernameRef}/>
         <Input placeHolder="Password" ref={passwordRef}/>
-        <div className="flex justify-center items-center">
+        <Input placeHolder="Re-Password" ref={passwordRef}/>
+        <div className="flex justify-center w-full items-center">
           <Button
             onClick={signup}
             varient="primary"

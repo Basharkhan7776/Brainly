@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 
 interface ButtonProps {
   varient: "primary" | "secondary";
-  text: string;
+  text?: string;
   startIcon?: ReactElement;
   onClick?: () => void;
   fullWidth?: boolean;
@@ -20,9 +20,9 @@ export function Button({ varient, text, startIcon, onClick, fullWidth, loading, 
     <button
       onClick={onClick}
       disabled={loading}
-      className={`${varientClasses[varient]} ${(fullWidth)?"w-full":""} px-4 py-2 rounded-lg m-1 font-light flex items-center justify-center transition-all duration-200 ${(animate)?"hover:-translate-x-0.5 hover:-translate-y-0.5 shadow-sm shadow-gray-700":""} ${(loading)?"opacity-45":""}`}
+      className={`${varientClasses[varient]} ${(fullWidth)?"w-full":""} px-4 py-2 rounded-lg m-1 font-light flex gap-2 items-center justify-center transition-all duration-200 ${(animate)?"hover:-translate-x-0.5 hover:-translate-y-0.5 shadow-sm shadow-gray-700":""} ${(loading)?"opacity-45":""}`}
     >
-      <div className={`${(startIcon)?"mr-2":""}`}>{startIcon}</div>
+      <div>{startIcon}</div>
       {text}
     </button>
   );

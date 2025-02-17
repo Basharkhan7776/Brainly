@@ -30,7 +30,7 @@ export function Sidebar() {
       <div className="pt-4">
         <Sidebaritem text="Twitter" icon={<Twittericon size={35} />} />
         <Sidebaritem text="Youtube" icon={<Youtubeicon size={40} />} />
-        <Sidebaritem text="Documents" icon={<Docicon />} />
+        <Sidebaritem text="Documents" icon={<Docicon  size={8}/>} />
         <Sidebaritem text="Link" icon={<Linkicon size={8}/>} />
         <Sidebaritem text="Tags" icon={<Tagicon />} />
       </div>

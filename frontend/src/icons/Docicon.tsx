@@ -1,4 +1,4 @@
-export function Docicon() {
+export function Docicon({size}:{size:number}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -6,7 +6,7 @@ export function Docicon() {
       viewBox="0 0 24 24"
       stroke-width="2"
       stroke="currentColor"
-      class="size-8"
+      className={`size-${size}`}
     >
       <path
         stroke-linecap="round"
