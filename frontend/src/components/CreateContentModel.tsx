@@ -59,10 +59,10 @@ export function CreateContentModel({ open, onClose }: { open: boolean, onClose: 
                 {(tags == "Twitter" || tags == "Youtube") && <><Input placeHolder="Enter URL" required="required" /></>}
                 {(tags == "Document") && <><Input placeHolder="Enter your Content" required="required" /></>}
                 {(tags == "Link") &&
-                  <>
+                  <div className="flex flex-col">
                     <Input placeHolder="Enter your URL" required="required" />
                     <Input placeHolder="Enter your Content" required="required" />
-                  </>
+                  </div>
                 }
               </div>
             </div>

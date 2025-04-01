@@ -3,6 +3,7 @@ import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { Sidebar } from "../components/Sidebar";
 import { CreateContentModel } from "../components/CreateContentModel";
+import { ShareBrainModel } from "../components/ShareBrainModel";
 import { Plusicon } from "../icons/Plusicon";
 import { Shareicon } from "../icons/Shareicon";
 import { Opendashboard } from "../icons/Opendashboard";
@@ -13,7 +14,8 @@ import { dash } from '../atoms';
 
 
 export function Dashboard() {
-  const [modelOpen, setModelOpen] = useState(false);
+  const [AddModel, setAddModel] = useState(false);
+  const [ShareModel, setShareModel] = useState(false);
   const setDash = useSetRecoilState(dash);
   const dashValue = useRecoilValue(dash);
 
@@ -22,9 +24,15 @@ export function Dashboard() {
       <Sidebar />
       <div className="p-4 px-10 min-h-screen bg-gray-100 w-full ">
         <CreateContentModel
-          open={modelOpen}
+          open={AddModel}
           onClose={() => {
-            setModelOpen(false);
+            setAddModel(false);
+          }}
+        />
+        <ShareBrainModel
+          open={ShareModel}
+          onClose={() => {
+            setShareModel(false);
           }}
         />
         <div className="flex justify-between items-center mb-4">
@@ -44,7 +52,7 @@ export function Dashboard() {
               text="Add contant"
               startIcon={<Plusicon />}
               onClick={() => {
-                setModelOpen(true);
+                setAddModel(true);
               }}
               animate={true}
             ></Button>
@@ -52,6 +60,9 @@ export function Dashboard() {
               varient="secondary"
               text="Share Brain"
               startIcon={<Shareicon />}
+              onClick={() => {
+                setShareModel(true);
+              }}
               animate={true}
             ></Button>
           </div>
