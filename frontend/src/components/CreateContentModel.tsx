@@ -1,17 +1,16 @@
 import { Crossicon } from "../icons/Crossicon";
 import { Docicon } from "../icons/Docicon";
 import { Linkicon } from "../icons/Linkicon";
+import { SendIcon } from "../icons/SendIcon";
 import { Twittericon } from "../icons/Twittericon";
 import { Youtubeicon } from "../icons/Youtubeicon";
+import { BackIcon } from "../icons/BackIcon";
 import { Button } from "./Button";
 import { Input } from "./Input";
 import { useState } from "react";
 
 export function CreateContentModel({ open, onClose }: { open: boolean, onClose: () => void }) {
-  const [twitter, setTwitter] = useState(false);
-  const [youtube, setYoutube] = useState(false);
-  const [docs, setDocs] = useState(false);
-  const [link, setLink] = useState(false);
+  const [tags, setTags] = useState<string>("");
 
 
   return (
@@ -27,34 +26,58 @@ export function CreateContentModel({ open, onClose }: { open: boolean, onClose: 
                 <Crossicon />
               </div>
             </div>
-            <div className="flex flex-col justify-center items-center w-full">
-              <Input
-                placeHolder="Title"
-                required="required"
-              />
-            </div>
-            <div className="flex flex-wrap gap-1">
-              <Button
-                varient="secondary"
-                startIcon={<Twittericon size={20} />}
-              />
-              <Button
-                varient="secondary"
-                startIcon={<Youtubeicon size={20} />}
-              />
-              <Button
-                varient="secondary"
-                startIcon={<Docicon size={5} />}
-              />
-              <Button
-                varient="secondary"
-                startIcon={<Linkicon size={5}/>}
-              />
+            <div>
+              <div className="flex flex-col justify-center items-center w-full">
+                <Input
+                  placeHolder="Title"
+                  required="required"
+                />
+              </div>
+              <div className={`${tags == "" ? "flex" : "hidden"} flex-wrap gap-1 `}>
+                <Button
+                  varient="secondary"
+                  startIcon={<Twittericon size={20} />}
+                  onClick={() => setTags("Twitter")}
+                />
+                <Button
+                  varient="secondary"
+                  startIcon={<Youtubeicon size={20} />}
+                  onClick={() => setTags("Youtube")}
+                />
+                <Button
+                  varient="secondary"
+                  startIcon={<Docicon size={5} />}
+                  onClick={() => setTags("Document")}
+                />
+                <Button
+                  varient="secondary"
+                  startIcon={<Linkicon size={5} />}
+                  onClick={() => setTags("Link")}
+                />
+              </div>
+              <div className="flex items-center gap-1">
+                {(tags == "Twitter" || tags == "Youtube") && <><Input placeHolder="Enter URL" required="required" /></>}
+                {(tags == "Document") && <><Input placeHolder="Enter your Content" required="required" /></>}
+                {(tags == "Link") &&
+                  <>
+                    <Input placeHolder="Enter your URL" required="required" />
+                    <Input placeHolder="Enter your Content" required="required" />
+                  </>
+                }
+              </div>
             </div>
             <div className="flex justify-center w-full">
+              <div className={`${tags == "" ? "hidden" : "flex"}`}>
+                <Button
+                  varient="secondary"
+                  onClick={() => setTags("")}
+                  startIcon={<BackIcon size={20} />}
+                ></Button>
+              </div>
               <Button
                 varient="primary"
                 text="Submit"
+                startIcon={<SendIcon size={20} />}
               />
             </div>
           </form>
