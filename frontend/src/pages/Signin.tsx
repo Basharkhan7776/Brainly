@@ -9,7 +9,7 @@ export function Signin() {
 
   return (
     <div className="h-screen w-screen bg-gray-200 flex justify-center items-center">
-      <form className="flex flex-col gap-2 justify-center items-center bg-white rounded-lg h-96 border min-w-48 px-12 ">
+      <form className="flex flex-col gap-2 justify-center items-center bg-white rounded-lg border p-12 ">
         <div className="flex text-2xl font-semibold items-center cursor-pointer" onClick={() => {navigate("/")}}>
           <div className="mr-4 text-purple-600">
             <Logo />

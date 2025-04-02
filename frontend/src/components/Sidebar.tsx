@@ -8,17 +8,24 @@ import { Crossicon } from "../icons/Crossicon";
 import { Logo } from "../icons/Logo";
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 import { dash } from '../atoms';
+import { useNavigate } from "react-router-dom";
 
 export function Sidebar() {
+  const navigate = useNavigate();
   const setDash = useSetRecoilState(dash);
   const dashValue = useRecoilValue(dash);
+
+
+
   return (
     <div className={` h-screen bg-white border-r w-96 left-0 top-0 ${dashValue ? "block" : "hidden"} translate-all duration-200`}>
-      <div className="mt-4 ml-9 flex text-2xl font-semibold items-center cursor-default">
-        <div className="mr-6 text-purple-600">
-          <Logo />
+      <div className="mt-4 ml-9 flex text-2xl font-semibold items-center cursor-default" >
+        <div onClick={() => { navigate("/") }}>
+          <div className="mr-6 text-purple-600">
+            <Logo />
+          </div>
+          Brainly
         </div>
-        Brainly
         <div
           onClick={() => {
             setDash(false);
@@ -30,8 +37,8 @@ export function Sidebar() {
       <div className="pt-4">
         <Sidebaritem text="Twitter" icon={<Twittericon size={35} />} />
         <Sidebaritem text="Youtube" icon={<Youtubeicon size={40} />} />
-        <Sidebaritem text="Documents" icon={<Docicon  size={8}/>} />
-        <Sidebaritem text="Link" icon={<Linkicon size={8}/>} />
+        <Sidebaritem text="Documents" icon={<Docicon size={8} />} />
+        <Sidebaritem text="Link" icon={<Linkicon size={8} />} />
         <Sidebaritem text="Tags" icon={<Tagicon />} />
       </div>
     </div>
