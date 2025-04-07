@@ -20,7 +20,7 @@ export function Sidebar() {
   return (
     <div className={` h-screen bg-white border-r w-96 left-0 top-0 ${dashValue ? "block" : "hidden"} translate-all duration-200`}>
       <div className="mt-4 ml-9 flex text-2xl font-semibold items-center cursor-default" >
-        <div onClick={() => { navigate("/") }}>
+        <div className="flex items-center" onClick={() => { navigate("/") }}>
           <div className="mr-6 text-purple-600">
             <Logo />
           </div>
