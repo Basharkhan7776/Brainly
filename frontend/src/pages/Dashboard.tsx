@@ -67,7 +67,7 @@ export function Dashboard() {
             ></Button>
           </div>
         </div>
-        <div className="flex gap-8 flex-wrap">
+        <div className="flex gap-8 flex-wrap justify-start">
           <Card
             type="twitter"
             link="https://x.com/mannupaaji/status/1878076302218912176"

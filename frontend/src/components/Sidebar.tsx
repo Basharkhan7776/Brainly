@@ -3,7 +3,6 @@ import { Twittericon } from "../icons/Twittericon";
 import { Youtubeicon } from "../icons/Youtubeicon";
 import { Docicon } from "../icons/Docicon";
 import { Linkicon } from "../icons/Linkicon";
-import { Tagicon } from "../icons/Tagicon";
 import { Crossicon } from "../icons/Crossicon";
 import { Logo } from "../icons/Logo";
 import { useSetRecoilState, useRecoilValue } from 'recoil';
@@ -39,7 +38,6 @@ export function Sidebar() {
         <Sidebaritem text="Youtube" icon={<Youtubeicon size={40} />} />
         <Sidebaritem text="Documents" icon={<Docicon size={8} />} />
         <Sidebaritem text="Link" icon={<Linkicon size={8} />} />
-        <Sidebaritem text="Tags" icon={<Tagicon />} />
       </div>
     </div>
   );
