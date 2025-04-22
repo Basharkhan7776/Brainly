@@ -8,6 +8,7 @@ interface ButtonProps {
   fullWidth?: boolean;
   loading?:boolean;
   animate?:boolean;
+  type?: "button" | "submit" | "reset";
 }
 
 const varientClasses = {
@@ -15,12 +16,13 @@ const varientClasses = {
   secondary: "bg-purple-200 text-purple-600 hover:bg-purple-400 hover:text-white",
 };
 
-export function Button({ varient, text, startIcon, onClick, fullWidth, loading, animate }: ButtonProps) {
+export function Button({ varient, text, startIcon, onClick, fullWidth, loading, animate, type }: ButtonProps) {
   return (
     <button
       onClick={onClick}
       disabled={loading}
       className={`${varientClasses[varient]} ${(fullWidth)?"w-full":""} px-4 py-2 rounded-lg m-1 font-light flex gap-2 items-center justify-center transition-all duration-200 ${(animate)?"hover:-translate-x-0.5 hover:-translate-y-0.5 shadow-sm shadow-gray-700":""} ${(loading)?"opacity-45":""}`}
+      type={type}
     >
       <div>{startIcon}</div>
       {text}
