@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { Sidebar } from "../components/Sidebar";
@@ -9,6 +9,8 @@ import { Shareicon } from "../icons/Shareicon";
 import { Opendashboard } from "../icons/Opendashboard";
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 import { dash } from '../atoms';
+import { backendUrl } from "../envConfig";
+import axios from "axios";
 
 
 
@@ -18,6 +20,41 @@ export function Dashboard() {
   const [ShareModel, setShareModel] = useState(false);
   const setDash = useSetRecoilState(dash);
   const dashValue = useRecoilValue(dash);
+  const [content, setContent] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setError("User not authenticated");
+          setLoading(false);
+          return;
+        }
+        const response = await axios.get(`${backendUrl}/api/v1/content`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+
+        const data = await response.data.content;
+        console.log(data);
+        setContent(data);
+      } catch (err: any) {
+        setError(err.response?.data?.message || "Content fetching failed");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchContent();
+
+  }, []);
+
+
 
   return (
     <div className="flex flex-row">
@@ -69,20 +106,19 @@ export function Dashboard() {
         </div>
         <div className="flex gap-8 flex-wrap justify-start">
           <Card
-            type="twitter"
-            link="https://x.com/mannupaaji/status/1878076302218912176"
-            title="First Post"
-          />
-          <Card
-            type="youtube"
-            link="https://youtu.be/Ue5bOpVswIo?si=lJ8PFUQ-ystsPA8l"
-            title="Second One"
-          />
-          <Card
             type="link"
             link="https://difficult-hosta-226.notion.site/11-Building-a-second-brain-app-16e4681ba151808e982ccc7f73fc7b48"
             title="Third One"
           />
+          {content.map((item) => {
+            return <Card
+              key={item._id}
+              title={item.title}
+              type={item.type}
+              content={item.content}
+              link={item.link}
+            />
+          })}
         </div>
       </div>
     </div>

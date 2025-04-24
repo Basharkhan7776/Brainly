@@ -10,18 +10,18 @@ import { Docicon } from "../icons/Docicon";
 interface cardProps {
   title: string;
   link: string;
-  type: "twitter" | "youtube" | "link" | "docs";
-  description?: string;
+  type: "twitter" | "youtube" | "link" | "document";
+  content?: string;
 }
 
 const frontIcons = {
   "twitter": <Twittericon size={25} />,
   "youtube": <Youtubeicon size={30} />,
   "link": <Linkicon size={6} />,
-  "docs": <Docicon size={8}/>,
+  "document": <Docicon size={8}/>,
 }
 
-export function Card({ title, link, type, description }: cardProps) {
+export function Card({ title, link, type, content }: cardProps) {
   return (
     <div className="p-6 bg-white rounded-lg shadow-md border-gray-200 max-w-96 border min-w-72">
       <div className="flex justify-between items-center">
@@ -37,8 +37,8 @@ export function Card({ title, link, type, description }: cardProps) {
       <div className="pt-4 flex cursor-pointer text-lg justify-center">
         {type == "youtube" && <YouTubeEmbed url={link} width={300} />}
         {type == "twitter" && <TwitterEmbed url={link} />}
-        {type == "link" && <Link link={link} description={description}/>}
-        {type == "docs" && <p>{description}</p>}
+        {type == "link" && <Link link={link} description={content}/>}
+        {type == "document" && <p>{content}</p>}
       </div>
     </div>
   );
