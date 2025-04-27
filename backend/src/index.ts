@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { random } from "./utils";
 import jwt from "jsonwebtoken";
 import { ContentModel, LinkModel, UserModel } from "./db";
@@ -6,55 +6,82 @@ import { JWT_PASSWORD } from "./config";
 import { userMiddleware } from "./middleware";
 import cors from "cors";
 import dotenv from 'dotenv';
+import bcrypt from 'bcrypt';
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.post("/api/v1/signup", async (req, res) => {
-    // TODO: zod validation , hash the password
+app.post("/api/v1/signup", async (req: Request, res: Response) => {
     const username = req.body.username;
     const password = req.body.password;
 
     try {
+        // Check if user already exists
+        const existingUser = await UserModel.findOne({ username });
+        if (existingUser) {
+            res.status(411).json({
+                message: "User already exists"
+            });
+            return;
+        }
+
+        // Hash the password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        // Create new user with hashed password
         await UserModel.create({
             username: username,
-            password: password
-        }) 
+            password: hashedPassword
+        });
 
         res.json({
-            message: "User signed up"
-        })
+            message: "User signed up successfully"
+        });
     } catch(e) {
-        res.status(411).json({
-            message: "User already exists"
-        })
+        res.status(500).json({
+            message: "Error creating user"
+        });
     }
-})
+});
 
-app.post("/api/v1/signin", async (req, res) => {
+app.post("/api/v1/signin", async (req: Request, res: Response) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    const existingUser = await UserModel.findOne({
-        username,
-        password
-    })
-    if (existingUser) {
+    try {
+        const existingUser = await UserModel.findOne({ username });
+        if (!existingUser) {
+            res.status(403).json({
+                message: "User not found"
+            });
+            return;
+        }
+
+        // Compare password with hashed password
+        const isPasswordValid = await bcrypt.compare(password, existingUser.password || '');
+        if (!isPasswordValid) {
+            res.status(403).json({
+                message: "Incorrect password"
+            });
+            return;
+        }
+
         const token = jwt.sign({
             id: existingUser._id
-        }, JWT_PASSWORD)
+        }, JWT_PASSWORD);
 
         res.json({
             token
-        })
-    } else {
-        res.status(403).json({
-            message: "Incorrrect credentials"
-        })
+        });
+    } catch(e) {
+        res.status(500).json({
+            message: "Error signing in"
+        });
     }
-})
+});
 
 app.post("/api/v1/content", userMiddleware, async (req, res) => {
     const link = req.body.link;
@@ -88,14 +115,27 @@ app.get("/api/v1/content", userMiddleware, async (req, res) => {
 app.delete("/api/v1/content", userMiddleware, async (req, res) => {
     const contentId = req.body.contentId;
 
-    await ContentModel.deleteMany({
-        contentId,
-        userId: req.userId
-    })
+    try {
+        const result = await ContentModel.deleteOne({
+            _id: contentId,
+            userId: req.userId
+        });
 
-    res.json({
-        message: "Deleted"
-    })
+        if (result.deletedCount === 0) {
+            res.status(404).json({
+                message: "Content not found or you don't have permission to delete it"
+            });
+            return;
+        }
+
+        res.json({
+            message: "Content deleted successfully"
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error deleting content"
+        });
+    }
 })
 
 app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {

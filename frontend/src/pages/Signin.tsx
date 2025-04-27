@@ -5,47 +5,40 @@ import { useNavigate } from "react-router-dom";
 import { backendUrl } from "../envConfig";
 import axios from "axios";
 import { useState } from "react";
-
-
+import { useToast } from "../hooks/useToast";
 
 export function Signin() {
   const navigate = useNavigate();
+  const { showError, showSuccess } = useToast();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleSubmit = async (e:React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
     try {
       const response = await axios.post(`${backendUrl}/api/v1/signin`, {
         username,
         password
-      })
-      console.log(response.data);
-      if (response.data.token){
+      });
+      
+      if (response.data.token) {
         localStorage.setItem("token", response.data.token);
+        showSuccess("Successfully signed in!");
         navigate("/dashboard");
-      }else{
-        setError("Invalid credentials");
       }
-    } catch (err:any) {
-      setError(err.response?.data?.message || "Signin failed");
-    }finally{
+    } catch (err: any) {
+      showError(err.response?.data?.message || "Failed to sign in");
+    } finally {
       setLoading(false);
     }
-  }
-
-
-  console.log(error);
-
+  };
 
   return (
     <div className="h-screen w-screen bg-gray-200 flex justify-center items-center">
       <form
-        className="flex flex-col gap-2 justify-center items-center bg-white rounded-lg border p-12 "
+        className="flex flex-col gap-2 justify-center items-center bg-white rounded-lg border p-12"
         onSubmit={handleSubmit}
       >
         <div className="flex text-2xl font-semibold items-center cursor-pointer" onClick={() => { navigate("/") }}>

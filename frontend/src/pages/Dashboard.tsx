@@ -8,58 +8,64 @@ import { Plusicon } from "../icons/Plusicon";
 import { Shareicon } from "../icons/Shareicon";
 import { Opendashboard } from "../icons/Opendashboard";
 import { useSetRecoilState, useRecoilValue } from 'recoil';
-import { dash } from '../atoms';
+import { dash, selectedContentType } from '../atoms';
 import { backendUrl } from "../envConfig";
 import axios from "axios";
-
-
-
 
 export function Dashboard() {
   const [AddModel, setAddModel] = useState(false);
   const [ShareModel, setShareModel] = useState(false);
   const setDash = useSetRecoilState(dash);
   const dashValue = useRecoilValue(dash);
+  const selectedType = useRecoilValue(selectedContentType);
   const [content, setContent] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
-  useEffect(() => {
-    const fetchContent = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("User not authenticated");
-          setLoading(false);
-          return;
-        }
-        const response = await axios.get(`${backendUrl}/api/v1/content`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        });
-
-        const data = await response.data.content;
-        console.log(data);
-        setContent(data);
-      } catch (err: any) {
-        setError(err.response?.data?.message || "Content fetching failed");
-      } finally {
+  const fetchContent = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("User not authenticated");
         setLoading(false);
+        return;
       }
-    }
-    fetchContent();
+      const response = await axios.get(`${backendUrl}/api/v1/content`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
 
+      const data = await response.data.content;
+      console.log(data);
+      setContent(data);
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Content fetching failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchContent();
   }, []);
 
+  const handleContentDelete = () => {
+    fetchContent();
+  };
 
+  console.log(loading);
+
+  const filteredContent = selectedType === 'all' 
+    ? content 
+    : content.filter(item => item.type === selectedType);
 
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-col md:flex-row min-h-screen">
       <Sidebar />
-      <div className="p-4 px-10 min-h-screen bg-gray-100 w-full ">
+      <div className="p-4 px-4 md:px-10 min-h-screen bg-gray-100 w-full">
         <CreateContentModel
           open={AddModel}
           onClose={() => {
@@ -72,27 +78,27 @@ export function Dashboard() {
             setShareModel(false);
           }}
         />
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex text-4xl font-semibold justify-center items-center transition-all duration-200">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+          <div className="flex text-2xl md:text-4xl font-semibold justify-center items-center transition-all duration-200">
             <div
               onClick={() => {
                 setDash(true);
               }}
-              className={`cursor-pointer hover:text-purple-600 mr-12 ${(dashValue ? "hidden" : "block")}`} >
+              className={`cursor-pointer hover:text-purple-600 mr-4 md:mr-12 ${(dashValue ? "hidden" : "block")}`} >
               <Opendashboard />
             </div>
-            All Notes
+            {selectedType === 'all' ? 'All Notes' : `${selectedType.charAt(0).toUpperCase() + selectedType.slice(1)} Notes`}
           </div>
-          <div className="flex justify-end gap-4">
+          <div className="flex justify-end gap-2 md:gap-4 w-full md:w-auto">
             <Button
               varient="primary"
-              text="Add contant"
+              text="Add content"
               startIcon={<Plusicon />}
               onClick={() => {
                 setAddModel(true);
               }}
               animate={true}
-            ></Button>
+            />
             <Button
               varient="secondary"
               text="Share Brain"
@@ -101,24 +107,28 @@ export function Dashboard() {
                 setShareModel(true);
               }}
               animate={true}
-            ></Button>
+            />
           </div>
         </div>
-        <div className="flex gap-8 flex-wrap justify-start">
-          <Card
-            type="link"
-            link="https://difficult-hosta-226.notion.site/11-Building-a-second-brain-app-16e4681ba151808e982ccc7f73fc7b48"
-            title="Third One"
-          />
-          {content.map((item) => {
-            return <Card
-              key={item._id}
-              title={item.title}
-              type={item.type}
-              content={item.content}
-              link={item.link}
-            />
-          })}
+        {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
+          {filteredContent.length === 0 ? (
+            <div className="col-span-full text-center text-gray-500 text-xl mt-8">
+              No {selectedType === 'all' ? '' : selectedType} content found
+            </div>
+          ) : (
+            filteredContent.map((item) => (
+              <Card
+                key={item._id}
+                _id={item._id}
+                title={item.title}
+                type={item.type}
+                content={item.content}
+                link={item.link}
+                onDelete={handleContentDelete}
+              />
+            ))
+          )}
         </div>
       </div>
     </div>
