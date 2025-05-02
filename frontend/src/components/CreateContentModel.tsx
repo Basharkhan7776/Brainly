@@ -22,7 +22,7 @@ export function CreateContentModel({ open, onClose }: { open: boolean, onClose: 
   const [error, setError] = useState<string>("");
 
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async () => {
     setError("");
     setLoading(true);
     try {

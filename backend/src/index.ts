@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import { random } from "./utils";
 import jwt from "jsonwebtoken";
 import { ContentModel, LinkModel, UserModel } from "./db";
-import { JWT_PASSWORD } from "./config";
+import { JWT_PASSWORD, frontendUrl } from "./config";
 import { userMiddleware } from "./middleware";
 import cors from "cors";
 import dotenv from 'dotenv';
@@ -11,7 +11,21 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+    cors({
+        origin: [frontendUrl, "http://brainly-server.onrender.com"], // Allow specific origins
+        methods: ["GET", "POST", "PUT", "DELETE"], // Allow specific HTTP methods
+        credentials: true, // Allow cookies and credentials
+    })
+);
+
+
+app.get("/", (req, res) => {
+    res.json({
+        message: "Brainly backend"
+    });
+});
+
 
 app.post("/api/v1/signup", async (req: Request, res: Response) => {
     const username = req.body.username;
@@ -40,7 +54,7 @@ app.post("/api/v1/signup", async (req: Request, res: Response) => {
         res.json({
             message: "User signed up successfully"
         });
-    } catch(e) {
+    } catch (e) {
         res.status(500).json({
             message: "Error creating user"
         });
@@ -76,7 +90,7 @@ app.post("/api/v1/signin", async (req: Request, res: Response) => {
         res.json({
             token
         });
-    } catch(e) {
+    } catch (e) {
         res.status(500).json({
             message: "Error signing in"
         });
@@ -98,7 +112,7 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     res.json({
         message: "Content added"
     })
-    
+
 })
 
 app.get("/api/v1/content", userMiddleware, async (req, res) => {
@@ -141,25 +155,25 @@ app.delete("/api/v1/content", userMiddleware, async (req, res) => {
 app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {
     const share = req.body.share;
     if (share) {
-            const existingLink = await LinkModel.findOne({
-                userId: req.userId
-            });
+        const existingLink = await LinkModel.findOne({
+            userId: req.userId
+        });
 
-            if (existingLink) {
-                res.json({
-                    hash: existingLink.hash
-                })
-                return;
-            }
-            const hash = random(10);
-            await LinkModel.create({
-                userId: req.userId,
-                hash: hash
-            })
-
+        if (existingLink) {
             res.json({
-                hash
+                hash: existingLink.hash
             })
+            return;
+        }
+        const hash = random(10);
+        await LinkModel.create({
+            userId: req.userId,
+            hash: hash
+        })
+
+        res.json({
+            hash
+        })
     } else {
         await LinkModel.deleteOne({
             userId: req.userId
