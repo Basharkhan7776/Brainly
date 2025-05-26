@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { motion } from "framer-motion";
+import signupImg from "@/assets/signupImg.png";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -47,11 +48,13 @@ const Signup = () => {
     >
       <div className="w-full h-full grid lg:grid-cols-2">
         <motion.div
-          className="bg-muted hidden lg:block"
+          className="max-h-screen bg-muted hidden lg:block "
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-        />
+        >
+          <img src={signupImg} alt="Signup Background" className="w-full h-full" />
+        </motion.div>
         <motion.div
           className="max-w-xs m-auto w-full flex flex-col items-center"
           initial={{ x: 50, opacity: 0 }}

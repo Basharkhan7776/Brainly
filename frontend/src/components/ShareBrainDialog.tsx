@@ -73,20 +73,20 @@ const ShareBrainDialog: React.FC<ShareBrainDialogProps> = ({ onClose }) => {
   return (
     <div className="space-y-6">
       <DialogHeader>
-        <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent flex items-center">
-          <Share2 className="w-6 h-6 mr-2 text-purple-600" />
+        <DialogTitle className="text-2xl font-bold  flex items-center">
+          <Share2 className="w-6 h-6 mr-2 " />
           Share Your Brain
         </DialogTitle>
       </DialogHeader>
 
       <div className="space-y-6">
         {/* Sharing Toggle */}
-        <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">
+        <Card className="">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <Label className="text-base font-semibold">Enable Public Sharing</Label>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm ">
                   Allow others to view your notes collection through a public link
                 </p>
               </div>
@@ -107,13 +107,13 @@ const ShareBrainDialog: React.FC<ShareBrainDialogProps> = ({ onClose }) => {
 
         {/* Share Link Section */}
         {(isSharing || shareLink) && (
-          <Card className="border-green-200 bg-green-50">
+          <Card>
             <CardContent className="p-6 space-y-4">
               <div className="space-y-2">
-                <Label className="text-base font-semibold text-green-800">
+                <Label className="text-base font-semibold">
                   Public Share Link
                 </Label>
-                <p className="text-sm text-green-700">
+                <p className="text-sm">
                   Anyone with this link can view your shared notes
                 </p>
               </div>
@@ -122,27 +122,24 @@ const ShareBrainDialog: React.FC<ShareBrainDialogProps> = ({ onClose }) => {
                 <Input
                   value={shareLink}
                   readOnly
-                  className="bg-white border-green-300 text-green-800"
                 />
                 <Button
                   onClick={copyToClipboard}
                   variant="outline"
-                  className="border-green-300 text-green-700 hover:bg-green-100"
                 >
                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 </Button>
                 <Button
                   onClick={() => window.open(shareLink, '_blank')}
                   variant="outline"
-                  className="border-green-300 text-green-700 hover:bg-green-100"
                 >
                   <ExternalLink className="w-4 h-4" />
                 </Button>
               </div>
 
-              <div className="p-3 bg-white rounded-lg border border-green-200">
-                <h4 className="font-medium text-green-800 mb-2">What others will see:</h4>
-                <ul className="text-sm text-green-700 space-y-1">
+              <div className="p-3 rounded border">
+                <h4 className="font-medium mb-2">What others will see:</h4>
+                <ul className="text-sm space-y-1">
                   <li>• Your username</li>
                   <li>• All your public notes and their titles</li>
                   <li>• Tags and content types</li>
@@ -155,24 +152,24 @@ const ShareBrainDialog: React.FC<ShareBrainDialogProps> = ({ onClose }) => {
 
         {/* Instructions */}
         {!isSharing && (
-          <Card className="bg-gray-50 border-gray-200">
+          <Card>
             <CardContent className="p-6">
-              <h4 className="font-medium text-gray-800 mb-3">How sharing works:</h4>
-              <ul className="text-sm text-gray-600 space-y-2">
+              <h4 className="font-medium  mb-3">How sharing works:</h4>
+              <ul className="text-sm space-y-2">
                 <li className="flex items-start">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 rounded mr-3 mt-2 flex-shrink-0"></div>
                   Enable sharing to generate a unique public link
                 </li>
                 <li className="flex items-start">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 rounded mr-3 mt-2 flex-shrink-0"></div>
                   Share the link with friends, colleagues, or on social media
                 </li>
                 <li className="flex items-start">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 rounded mr-3 mt-2 flex-shrink-0"></div>
                   Others can view your notes but cannot edit or delete them
                 </li>
                 <li className="flex items-start">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 rounded mr-3 mt-2 flex-shrink-0"></div>
                   You can disable sharing at any time
                 </li>
               </ul>
@@ -189,7 +186,6 @@ const ShareBrainDialog: React.FC<ShareBrainDialogProps> = ({ onClose }) => {
             <Button 
               onClick={generateShareLink}
               disabled={isGenerating}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
             >
               {isGenerating ? 'Generating...' : 'Generate Share Link'}
             </Button>

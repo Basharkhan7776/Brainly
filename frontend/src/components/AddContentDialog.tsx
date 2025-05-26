@@ -135,7 +135,7 @@ const AddContentDialog: React.FC<AddContentDialogProps> = ({ onAdd, onClose }) =
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-h-screen overflow-y-auto">
       <DialogHeader>
         <DialogTitle className="text-2xl font-bold">
           Add New Content
@@ -146,21 +146,21 @@ const AddContentDialog: React.FC<AddContentDialogProps> = ({ onAdd, onClose }) =
         {/* Content Type Selection */}
         <div className="space-y-3">
           <Label className="text-base font-semibold">Content Type</Label>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 p-1">
             {contentTypes.map((contentType) => {
               const Icon = contentType.icon;
               return (
                 <Card
                   key={contentType.value}
-                  className={`cursor-pointer transition-all duration-200 ${
+                  className={`cursor-pointer h-12 transition-all duration-200 flex items-center justify-center ${
                     type === contentType.value
-                      ? 'ring-2 ring-gray-500 bg-gray-50 dark:bg-gray-800 dark:ring-gray-400'
-                      : 'hover:bg-gray-50 dark:hover:bg-gray-800'
+                      ? 'ring-2 ring-neutral-500 bg-neutral-50 dark:bg-neutral-800 dark:ring-neutral-400'
+                      : 'hover:bg-neutral-50 dark:hover:bg-neutral-800'
                   }`}
                   onClick={() => setType(contentType.value as Content['type'])}
                 >
-                  <CardContent className="p-4 text-center">
-                    <Icon className={`w-6 h-6 mx-auto mb-2 ${contentType.color}`} />
+                  <CardContent className="p-1 flex gap-2 items-center">
+                    <Icon className={`w-6 h-6 ${contentType.color}`} />
                     <div className="font-medium">{contentType.label}</div>
                   </CardContent>
                 </Card>
@@ -181,7 +181,6 @@ const AddContentDialog: React.FC<AddContentDialogProps> = ({ onAdd, onClose }) =
               placeholder="https://example.com"
               value={link}
               onChange={(e) => setLink(e.target.value)}
-              className="bg-white dark:bg-gray-800"
               required
             />
           </div>
@@ -197,7 +196,6 @@ const AddContentDialog: React.FC<AddContentDialogProps> = ({ onAdd, onClose }) =
             placeholder="Enter a descriptive title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="bg-white dark:bg-gray-800"
             required
           />
         </div>
@@ -226,10 +224,9 @@ const AddContentDialog: React.FC<AddContentDialogProps> = ({ onAdd, onClose }) =
               placeholder="Write your content in Markdown format..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="min-h-[200px] bg-white dark:bg-gray-800 font-mono"
               required
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs">
               Supports Markdown formatting. Use **bold**, *italic*, or __underline__ for formatting.
             </p>
           </div>
@@ -249,7 +246,7 @@ const AddContentDialog: React.FC<AddContentDialogProps> = ({ onAdd, onClose }) =
                   addTag();
                 }
               }}
-              className="flex-1 bg-white dark:bg-gray-800"
+              className="flex-1"
             />
             <Button type="button" onClick={addTag} variant="outline">
               <Plus className="w-4 h-4" />

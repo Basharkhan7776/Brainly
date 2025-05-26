@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { motion } from "framer-motion";
+import signinImg from "@/assets/signinImg.png"
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -141,11 +142,13 @@ const Signin = () => {
           </motion.div>
         </motion.div>
         <motion.div
-          className="bg-muted hidden lg:block"
+          className="max-h-screen bg-muted hidden lg:block"
           initial={{ x: 50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-        />
+        >
+          <img src={signinImg} alt="Signup Background" className="w-full h-full" />
+        </motion.div>
       </div>
     </motion.div >
   );

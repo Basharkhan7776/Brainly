@@ -43,14 +43,14 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       <DropdownMenuTrigger asChild>
         <Button 
           variant="outline" 
-          className="bg-white/80 backdrop-blur-sm border-purple-200 hover:border-purple-300 relative"
+          className=" relative"
         >
-          <Filter className="w-4 h-4 mr-2" />
+          <Filter className="w-4 h-4" />
           Filter by Tags
           {selectedTags.length > 0 && (
             <Badge 
               variant="secondary" 
-              className="ml-2 bg-purple-600 text-white px-2 py-0 text-xs"
+              className="ml-2  px-2 py-0 text-xs"
             >
               {selectedTags.length}
             </Badge>
@@ -59,7 +59,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       </DropdownMenuTrigger>
       
       <DropdownMenuContent 
-        className="w-64 bg-white/95 backdrop-blur-sm border-purple-200" 
+        className="w-64 " 
         align="end"
       >
         <DropdownMenuLabel className="flex items-center justify-between">
@@ -69,7 +69,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
               variant="ghost"
               size="sm"
               onClick={clearAllTags}
-              className="h-6 px-2 text-xs text-purple-600 hover:text-purple-700"
+              className="h-6 px-2 text-xs "
             >
               Clear all
             </Button>
@@ -80,7 +80,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
         
         <div className="p-2 max-h-60 overflow-y-auto">
           {allTags.length === 0 ? (
-            <div className="text-sm text-gray-500 text-center py-4">
+            <div className="text-sm  text-center py-4">
               No tags available
             </div>
           ) : (
@@ -88,13 +88,12 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
               {allTags.map(tag => (
                 <div
                   key={tag}
-                  className="flex items-center space-x-3 p-2 rounded-md hover:bg-purple-50 cursor-pointer"
+                  className="flex items-center space-x-3 p-2 rounded-md  cursor-pointer"
                   onClick={() => toggleTag(tag)}
                 >
                   <Checkbox
                     checked={selectedTags.includes(tag)}
                     onCheckedChange={() => toggleTag(tag)}
-                    className="border-purple-300 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                   />
                   <label className="text-sm font-medium cursor-pointer flex-1">
                     {tag}
