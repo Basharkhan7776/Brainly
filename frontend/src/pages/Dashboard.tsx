@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Moon, Sun, Plus } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -8,10 +7,10 @@ import ContentCard from '@/components/ContentCard';
 import FilterDropdown from '@/components/FilterDropdown';
 import AddContentDialog from '@/components/AddContentDialog';
 import ShareBrainDialog from '@/components/ShareBrainDialog';
-import { Toggle } from '@/components/ui/toggle';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
-import { Squares } from "@/components/ui/squares-background"
+import { Toaster, toast } from 'sonner';
+import axios from 'axios';
 
 
 interface Content {
@@ -53,17 +52,25 @@ const Dashboard = () => {
   // Toggle theme
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
-    window.location.reload()
   };
 
   // Fetch content on initial load
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        // Mock API call - replace with actual API call
-        // const response = await fetch('/api/v1/content');
-        // const data = await response.json();
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/content`);
+        setContent(response.data.content as Content[]);
 
+        // Extract all unique tags
+        const tags = (response.data.content as Content[]).flatMap((item: Content) => item.tags);
+        const uniqueTags = Array.from(new Set(tags)) as string[];
+        setAllTags(uniqueTags);
+        
+        toast.success('Content loaded successfully');
+      } catch (error) {
+        console.error('Error fetching content:', error);
+        toast.error('Failed to load content. Please try again later.');
+        // Fallback to mock data in case of error
         const mockData = {
           content: [
             {
@@ -126,15 +133,10 @@ const Dashboard = () => {
             }
           ]
         };
-
         setContent(mockData.content as Content[]);
-
-        // Extract all unique tags
         const tags = mockData.content.flatMap(item => item.tags);
-        const uniqueTags = Array.from(new Set(tags));
+        const uniqueTags = Array.from(new Set(tags)) as string[];
         setAllTags(uniqueTags);
-      } catch (error) {
-        console.error('Error fetching content:', error);
       }
     };
 
@@ -151,37 +153,39 @@ const Dashboard = () => {
   // Handle content deletion
   const handleDelete = async (id: number) => {
     try {
-      // Mock API call - replace with actual API call
-      // await fetch('/api/v1/content', {
-      //   method: 'DELETE',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({ contentId: id.toString() }),
-      // });
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/content`, {
+        data: { contentId: id.toString() }
+      });
 
       // Update state to remove the deleted item
       setContent(prev => prev.filter(item => item.id !== id));
+      toast.success('Content deleted successfully');
     } catch (error) {
       console.error('Error deleting content:', error);
+      toast.error('Failed to delete content. Please try again later.');
     }
   };
 
   // Add new content handler
-  const handleContentAdded = (newContent: Omit<Content, 'id'>) => {
-    const contentWithId: Content = {
-      ...newContent,
-      id: content.length + 1
-    };
-    setContent(prev => [...prev, contentWithId]);
+  const handleContentAdded = async (newContent: Omit<Content, 'id'>) => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/content`, newContent);
+      const addedContent = response.data;
 
-    // Update tags
-    const newTags = newContent.tags.filter(tag => !allTags.includes(tag));
-    if (newTags.length > 0) {
-      setAllTags(prev => [...prev, ...newTags]);
+      setContent(prev => [...prev, addedContent]);
+
+      // Update tags
+      const newTags = newContent.tags.filter(tag => !allTags.includes(tag));
+      if (newTags.length > 0) {
+        setAllTags(prev => [...prev, ...newTags]);
+      }
+
+      setIsAddDialogOpen(false);
+      toast.success('Content added successfully');
+    } catch (error) {
+      console.error('Error adding content:', error);
+      toast.error('Failed to add content. Please try again later.');
     }
-
-    setIsAddDialogOpen(false);
   };
 
   const containerVariants = {
@@ -205,12 +209,9 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen ">
+      <Toaster />
       <div className="fixed -z-10 h-full w-full rounded-lg overflow-hidden">
-        <Squares
-          direction="diagonal"
-          speed={0.5}
-          squareSize={40}
-        />
+        {/* Add background  */}
       </div>
       {/* Navigate to the dashboard page */}
       <header className=" border-b bg-primary-foreground fixed w-screen z-10  shadow">

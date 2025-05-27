@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,30 +12,50 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { motion } from "framer-motion";
-import signinImg from "@/assets/signinImg.png"
+import signinImg from "@/assets/signinImg.png";
+import { Toaster, toast } from "sonner";
+import axios from 'axios';
 
 const formSchema = z.object({
-  email: z.string().email(),
+  username: z.string().min(3, "Username must be at least 3 characters long"),
   password: z.string().min(8, "Password must be at least 8 characters long"),
 });
 
+type FormData = z.infer<typeof formSchema>;
+
 const Signin = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
-
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
-    resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+  const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/signin`, data);
+      
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        toast.success('Signed in successfully');
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error('Signin error:', error);
+      const errorMessage = axios.isAxiosError(error) 
+        ? error.response?.data?.message || 'Failed to sign in'
+        : 'Failed to sign in. Please try again.';
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -43,6 +65,7 @@ const Signin = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
+      <Toaster />
       <div className="w-full h-full grid lg:grid-cols-2">
         <motion.div
           className="max-w-xs m-auto w-full flex flex-col items-center"
@@ -70,15 +93,16 @@ const Signin = () => {
                 >
                   <FormField
                     control={form.control}
-                    name="email"
+                    name="username"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>Username</FormLabel>
                         <FormControl>
                           <Input
-                            type="email"
-                            placeholder="Email"
+                            type="text"
+                            placeholder="Enter your username"
                             className="w-full"
+                            disabled={isLoading}
                             {...field}
                           />
                         </FormControl>
@@ -101,8 +125,9 @@ const Signin = () => {
                         <FormControl>
                           <Input
                             type="password"
-                            placeholder="Password"
+                            placeholder="Enter your password"
                             className="w-full"
+                            disabled={isLoading}
                             {...field}
                           />
                         </FormControl>
@@ -116,8 +141,8 @@ const Signin = () => {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.6 }}
                 >
-                  <Button type="submit" className="mt-4 w-full">
-                    Continue with Email
+                  <Button type="submit" className="mt-4 w-full" disabled={isLoading}>
+                    {isLoading ? 'Signing in...' : 'Continue with Username'}
                   </Button>
                 </motion.div>
               </form>
@@ -150,9 +175,8 @@ const Signin = () => {
           <img src={signinImg} alt="Signup Background" className="w-full h-full" />
         </motion.div>
       </div>
-    </motion.div >
+    </motion.div>
   );
 };
-
 
 export default Signin;

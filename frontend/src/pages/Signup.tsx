@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,33 +11,59 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { motion } from "framer-motion";
 import signupImg from "@/assets/signupImg.png";
+import { Toaster, toast } from "sonner";
+import axios from 'axios';
+import { useState } from 'react';
 
 const formSchema = z.object({
-  email: z.string().email(),
+  username: z.string().min(3, "Username must be at least 3 characters long"),
   password: z.string().min(8, "Password must be at least 8 characters long"),
   repeatPassword: z.string().min(8, "Repeat Password must be at least 8 characters long"),
+}).refine((data) => data.password === data.repeatPassword, {
+  message: "Passwords don't match",
+  path: ["repeatPassword"],
 });
 
+type FormData = z.infer<typeof formSchema>;
+
 const Signup = () => {
-
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
-
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
       repeatPassword: "",
     },
-    resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+  const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
+    try { 
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/signup`, {
+        username: data.username,
+        password: data.password,
+      });
+      
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        toast.success('Account created successfully');
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      const errorMessage = axios.isAxiosError(error) 
+        ? error.response?.data?.message || 'Failed to sign up'
+        : 'Failed to sign up. Please try again.';
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -46,9 +73,10 @@ const Signup = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
+      <Toaster />
       <div className="w-full h-full grid lg:grid-cols-2">
         <motion.div
-          className="max-h-screen bg-muted hidden lg:block "
+          className="max-h-screen bg-muted hidden lg:block"
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
@@ -62,7 +90,7 @@ const Signup = () => {
           transition={{ duration: 0.8, delay: 0.1 }}
         >
           <p className="mt-4 text-xl font-bold tracking-tight">
-            Sign up for <a onClick={()=>navigate("/")} className="cursor-pointer">Brainly</a>
+            Sign up for <a onClick={() => navigate("/")} className="cursor-pointer">Brainly</a>
           </p>
 
           <motion.div
@@ -82,39 +110,16 @@ const Signup = () => {
                 >
                   <FormField
                     control={form.control}
-                    name="email"
+                    name="username"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>Username</FormLabel>
                         <FormControl>
                           <Input
-                            type="email"
-                            placeholder="Email"
+                            type="text"
+                            placeholder="Choose a username"
                             className="w-full"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </motion.div>
-                <motion.div
-                  initial={{ x: 30, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 0.45 }}
-                >
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="password"
-                            placeholder="Password"
-                            className="w-full"
+                            disabled={isLoading}
                             {...field}
                           />
                         </FormControl>
@@ -130,15 +135,41 @@ const Signup = () => {
                 >
                   <FormField
                     control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            placeholder="Create a password"
+                            className="w-full"
+                            disabled={isLoading}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </motion.div>
+                <motion.div
+                  initial={{ x: 30, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 0.75 }}
+                >
+                  <FormField
+                    control={form.control}
                     name="repeatPassword"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Repeat Password</FormLabel>
                         <FormControl>
                           <Input
-                            type="repeatPassword"
-                            placeholder="Password"
+                            type="password"
+                            placeholder="Confirm your password"
                             className="w-full"
+                            disabled={isLoading}
                             {...field}
                           />
                         </FormControl>
@@ -150,10 +181,10 @@ const Signup = () => {
                 <motion.div
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.75 }}
+                  transition={{ duration: 0.5, delay: 0.9 }}
                 >
-                  <Button type="submit" className="mt-4 w-full">
-                    Continue with Email
+                  <Button type="submit" className="mt-4 w-full" disabled={isLoading}>
+                    {isLoading ? 'Creating account...' : 'Create account'}
                   </Button>
                 </motion.div>
               </form>
@@ -164,7 +195,7 @@ const Signup = () => {
             className="mt-5 text-sm text-center"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
+            transition={{ duration: 0.6, delay: 1.05 }}
           >
             Already have an account?
             <a onClick={() => navigate("/signin")} className="ml-1 underline text-muted-foreground cursor-pointer">
@@ -176,7 +207,5 @@ const Signup = () => {
     </motion.div>
   );
 };
-
-
 
 export default Signup;
