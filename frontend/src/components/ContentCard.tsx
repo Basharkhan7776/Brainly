@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +16,7 @@ import ContentPreview from './ContentPreview';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface Content {
-  id: number;
+  _id: string;
   type: 'document' | 'tweet' | 'youtube' | 'link';
   link: string;
   title: string;

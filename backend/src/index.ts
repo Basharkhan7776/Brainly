@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(
     cors({
-        origin: [frontendUrl, "http://brainly-server.onrender.com"], // Allow specific origins
+        origin: ["http://localhost:5173"], // Allow frontend origin
         methods: ["GET", "POST", "PUT", "DELETE"], // Allow specific HTTP methods
         credentials: true, // Allow cookies and credentials
     })

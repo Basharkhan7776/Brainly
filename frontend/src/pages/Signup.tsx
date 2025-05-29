@@ -53,7 +53,7 @@ const Signup = () => {
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         toast.success('Account created successfully');
-        navigate('/dashboard');
+        navigate('/signin');
       }
     } catch (error) {
       console.error('Signup error:', error);

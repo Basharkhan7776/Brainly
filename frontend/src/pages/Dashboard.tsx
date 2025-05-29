@@ -14,7 +14,7 @@ import axios from 'axios';
 
 
 interface Content {
-  id: number;
+  _id: string;  // MongoDB uses _id
   type: 'document' | 'tweet' | 'youtube' | 'link';
   link: string;
   title: string;
@@ -58,7 +58,11 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/content`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/content`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
         setContent(response.data.content as Content[]);
 
         // Extract all unique tags
@@ -74,7 +78,7 @@ const Dashboard = () => {
         const mockData = {
           content: [
             {
-              id: 1,
+              _id: '1',
               type: 'document' as const,
               link: '',
               content: '# How to Take Smart Notes\n\nWhen taking notes, focus on **connecting ideas** rather than just collecting information. Here are some tips:\n\n1. Write in your own words\n2. Connect new notes to existing ones\n3. Keep your notes atomic\n4. Review regularly',
@@ -82,50 +86,21 @@ const Dashboard = () => {
               tags: ['productivity', 'learning']
             },
             {
-              id: 2,
+              _id: '2',
               type: 'youtube' as const,
               link: 'https://www.youtube.com/watch?v=l5bRPWxun4A',
               title: 'The Science of Learning',
               tags: ['education', 'science']
             },
             {
-              id: 3,
+              _id: '3',
               type: 'tweet' as const,
               link: 'https://x.com/_Bashar_khan_/status/1926883300410306980',
               title: 'Insights on Personal Knowledge Management',
               tags: ['productivity', 'PKM']
             },
             {
-              id: 4,
-              type: 'link' as const,
-              link: 'https://medium.com/article-about-note-taking',
-              title: 'Best Note-Taking Methods',
-              tags: ['productivity', 'creativity']
-            },
-            {
-              id: 5,
-              type: 'document' as const,
-              link: '',
-              content: '# How to Take Smart Notes\n\nWhen taking notes, focus on **connecting ideas** rather than just collecting information. Here are some tips:\n\n1. Write in your own words\n2. Connect new notes to existing ones\n3. Keep your notes atomic\n4. Review regularly',
-              title: 'How to Take Smart Notes',
-              tags: ['productivity', 'learning']
-            },
-            {
-              id: 6,
-              type: 'youtube' as const,
-              link: 'https://www.youtube.com/watch?v=l5bRPWxun4A',
-              title: 'The Science of Learning',
-              tags: ['education', 'science']
-            },
-            {
-              id: 7,
-              type: 'tweet' as const,
-              link: 'https://x.com/_Bashar_khan_/status/1926883300410306980',
-              title: 'Insights on Personal Knowledge Management',
-              tags: ['productivity', 'PKM']
-            },
-            {
-              id: 8,
+              _id: '4',
               type: 'link' as const,
               link: 'https://medium.com/article-about-note-taking',
               title: 'Best Note-Taking Methods',
@@ -145,20 +120,23 @@ const Dashboard = () => {
 
   // Filter content based on search term and selected tags
   const filteredContent = content.filter(item => {
-    const matchesSearchTerm = item.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => item.tags.includes(tag));
+    const matchesSearchTerm = item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false;
+    const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => item.tags?.includes(tag) ?? false);
     return matchesSearchTerm && matchesTags;
   });
 
   // Handle content deletion
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/content`, {
-        data: { contentId: id.toString() }
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/v1/content`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
+        data: { contentId: id }
       });
 
       // Update state to remove the deleted item
-      setContent(prev => prev.filter(item => item.id !== id));
+      setContent(prev => prev.filter(item => item._id !== id));
       toast.success('Content deleted successfully');
     } catch (error) {
       console.error('Error deleting content:', error);
@@ -167,9 +145,13 @@ const Dashboard = () => {
   };
 
   // Add new content handler
-  const handleContentAdded = async (newContent: Omit<Content, 'id'>) => {
+  const handleContentAdded = async (newContent: Omit<Content, '_id'>) => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/content`, newContent);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/content`, newContent, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       const addedContent = response.data;
 
       setContent(prev => [...prev, addedContent]);
@@ -288,8 +270,8 @@ const Dashboard = () => {
           animate="visible"
         >
           {filteredContent.map((item) => (
-            <motion.div key={item.id} variants={itemVariants}>
-              <ContentCard content={item} onDelete={() => handleDelete(item.id)} />
+            <motion.div key={item._id} variants={itemVariants}>
+              <ContentCard content={item} onDelete={() => handleDelete(item._id)} />
             </motion.div>
           ))}
 
