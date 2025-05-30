@@ -7,14 +7,16 @@ import ContentCard from '@/components/ContentCard';
 import FilterDropdown from '@/components/FilterDropdown';
 import AddContentDialog from '@/components/AddContentDialog';
 import ShareBrainDialog from '@/components/ShareBrainDialog';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
 import { Toaster, toast } from 'sonner';
 import axios from 'axios';
+import { useTheme } from '@/context/themeContext';
+import { Toggle } from '@/components/ui/toggle';
 
 
 interface Content {
-  _id: string;  // MongoDB uses _id
+  _id: string;
   type: 'document' | 'tweet' | 'youtube' | 'link';
   link: string;
   title: string;
@@ -30,29 +32,7 @@ const Dashboard = () => {
   const [allTags, setAllTags] = useState<string[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    // Check local storage first
-    const savedTheme = localStorage.getItem('brainly-theme');
-    // Check user preference
-    const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    return (savedTheme === 'dark' || (!savedTheme && userPrefersDark)) ? 'dark' : 'light';
-  });
-
-  // Effect for theme toggling
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-
-    localStorage.setItem('brainly-theme', theme);
-  }, [theme]);
-
-  // Toggle theme
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
-  };
+  const { theme, toggleTheme } = useTheme();
 
   // Fetch content on initial load
   useEffect(() => {
@@ -63,13 +43,14 @@ const Dashboard = () => {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
+        console.log('Fetched content:', response.data.content);
         setContent(response.data.content as Content[]);
 
         // Extract all unique tags
         const tags = (response.data.content as Content[]).flatMap((item: Content) => item.tags);
         const uniqueTags = Array.from(new Set(tags)) as string[];
         setAllTags(uniqueTags);
-        
+
         toast.success('Content loaded successfully');
       } catch (error) {
         console.error('Error fetching content:', error);
@@ -78,7 +59,7 @@ const Dashboard = () => {
         const mockData = {
           content: [
             {
-              _id: '1',
+              _id: "1",
               type: 'document' as const,
               link: '',
               content: '# How to Take Smart Notes\n\nWhen taking notes, focus on **connecting ideas** rather than just collecting information. Here are some tips:\n\n1. Write in your own words\n2. Connect new notes to existing ones\n3. Keep your notes atomic\n4. Review regularly',
@@ -86,21 +67,50 @@ const Dashboard = () => {
               tags: ['productivity', 'learning']
             },
             {
-              _id: '2',
+              _id: "2",
               type: 'youtube' as const,
               link: 'https://www.youtube.com/watch?v=l5bRPWxun4A',
               title: 'The Science of Learning',
               tags: ['education', 'science']
             },
             {
-              _id: '3',
+              _id: "3",
               type: 'tweet' as const,
               link: 'https://x.com/_Bashar_khan_/status/1926883300410306980',
               title: 'Insights on Personal Knowledge Management',
               tags: ['productivity', 'PKM']
             },
             {
-              _id: '4',
+              _id: "4",
+              type: 'link' as const,
+              link: 'https://medium.com/article-about-note-taking',
+              title: 'Best Note-Taking Methods',
+              tags: ['productivity', 'creativity']
+            },
+            {
+              _id: "5",
+              type: 'document' as const,
+              link: '',
+              content: '# How to Take Smart Notes\n\nWhen taking notes, focus on **connecting ideas** rather than just collecting information. Here are some tips:\n\n1. Write in your own words\n2. Connect new notes to existing ones\n3. Keep your notes atomic\n4. Review regularly',
+              title: 'How to Take Smart Notes',
+              tags: ['productivity', 'learning']
+            },
+            {
+              _id: "6",
+              type: 'youtube' as const,
+              link: 'https://www.youtube.com/watch?v=l5bRPWxun4A',
+              title: 'The Science of Learning',
+              tags: ['education', 'science']
+            },
+            {
+              _id: "7",
+              type: 'tweet' as const,
+              link: 'https://x.com/_Bashar_khan_/status/1926883300410306980',
+              title: 'Insights on Personal Knowledge Management',
+              tags: ['productivity', 'PKM']
+            },
+            {
+              _id: "8",
               type: 'link' as const,
               link: 'https://medium.com/article-about-note-taking',
               title: 'Best Note-Taking Methods',
@@ -126,17 +136,22 @@ const Dashboard = () => {
   });
 
   // Handle content deletion
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (_id: string) => {
+    if (_id === undefined || _id === null) {
+      toast.error('Invalid content ID');
+      return;
+    }
+
     try {
       await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/v1/content`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         },
-        data: { contentId: id }
+        data: { contentId: _id.toString() }
       });
 
       // Update state to remove the deleted item
-      setContent(prev => prev.filter(item => item._id !== id));
+      setContent(prev => prev.filter(item => item._id !== _id));
       toast.success('Content deleted successfully');
     } catch (error) {
       console.error('Error deleting content:', error);
@@ -145,8 +160,9 @@ const Dashboard = () => {
   };
 
   // Add new content handler
-  const handleContentAdded = async (newContent: Omit<Content, '_id'>) => {
+  const handleContentAdded = async (newContent: Omit<Content, "_id">) => {
     try {
+      console.log('Adding new content:', newContent);
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/content`, newContent, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -208,14 +224,14 @@ const Dashboard = () => {
           </motion.h1>
 
           <div className="flex items-center space-x-3">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={toggleTheme}
-              aria-label="Toggle dark mode"
+            <Toggle
+              pressed={theme === 'dark'}
+              onPressedChange={toggleTheme}
+              aria-label="Toggle theme"
+              className="ml-2"
             >
-              {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-            </Button>
+              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+            </Toggle>
           </div>
         </div>
       </header>
@@ -270,13 +286,17 @@ const Dashboard = () => {
           animate="visible"
         >
           {filteredContent.map((item) => (
-            <motion.div key={item._id} variants={itemVariants}>
+            <motion.div
+              key={`content-${item._id}`}
+              variants={itemVariants}
+            >
               <ContentCard content={item} onDelete={() => handleDelete(item._id)} />
             </motion.div>
           ))}
 
           {filteredContent.length === 0 && (
             <motion.div
+              key="empty-state"
               className="col-span-full flex flex-col items-center justify-center py-12 text-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -303,6 +323,10 @@ const Dashboard = () => {
       {/* Dialogs */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent className="sm:max-w-2xl">
+          <DialogTitle>Add New Content</DialogTitle>
+          <DialogDescription>
+            Add a new note, link, tweet, or YouTube video to your collection
+          </DialogDescription>
           <AddContentDialog
             onAdd={handleContentAdded}
             onClose={() => setIsAddDialogOpen(false)}
@@ -312,6 +336,10 @@ const Dashboard = () => {
 
       <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
         <DialogContent className="sm:max-w-2xl">
+          <DialogTitle>Share Your Brain</DialogTitle>
+          <DialogDescription>
+            Share your collection with others by generating a shareable link
+          </DialogDescription>
           <ShareBrainDialog onClose={() => setIsShareDialogOpen(false)} />
         </DialogContent>
       </Dialog>

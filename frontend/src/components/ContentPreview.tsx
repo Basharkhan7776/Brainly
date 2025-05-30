@@ -13,7 +13,7 @@ import { Tweet } from 'react-tweet'
 
 
 interface Content {
-  id: number;
+  _id: string;
   type: 'document' | 'tweet' | 'youtube' | 'link';
   link: string;
   title: string;

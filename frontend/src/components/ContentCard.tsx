@@ -11,7 +11,7 @@ import {
   Trash2,
   Eye
 } from 'lucide-react';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import ContentPreview from './ContentPreview';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -115,6 +115,10 @@ const ContentCard: React.FC<ContentCardProps> = ({ content, onDelete }) => {
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+              <DialogTitle>Content Preview</DialogTitle>
+              <DialogDescription>
+                View the full content of this item
+              </DialogDescription>
               <ContentPreview content={content} />
             </DialogContent>
           </Dialog>

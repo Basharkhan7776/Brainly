@@ -20,8 +20,10 @@ interface Content {
   content?: string;
 }
 
+import Content from '@/pages/Dashboard';
+
 interface AddContentDialogProps {
-  onAdd: (content: Content) => void;
+  onAdd: (content: Omit<Content, "_id">) => void | Promise<void>;
   onClose: () => void;
 }
 
@@ -111,7 +113,7 @@ const AddContentDialog: React.FC<AddContentDialogProps> = ({ onAdd, onClose }) =
         type,
         link: type === 'document' ? '' : link.trim(),
         title: title.trim(),
-        tags,
+        tags: tags,
         content: type === 'document' ? content.trim() : undefined
       });
       
@@ -127,12 +129,6 @@ const AddContentDialog: React.FC<AddContentDialogProps> = ({ onAdd, onClose }) =
     }
   };
 
-  const getTypeIcon = (typeValue: string) => {
-    const contentType = contentTypes.find(ct => ct.value === typeValue);
-    if (!contentType) return null;
-    const Icon = contentType.icon;
-    return <Icon className={`w-4 h-4 ${contentType.color}`} />;
-  };
 
   return (
     <div className="space-y-6 max-h-screen overflow-y-auto">
