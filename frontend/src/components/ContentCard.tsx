@@ -26,7 +26,7 @@ interface Content {
 
 interface ContentCardProps {
   content: Content;
-  onDelete: () => void;
+  onDelete?: () => void;
 }
 
 const ContentCard: React.FC<ContentCardProps> = ({ content, onDelete }) => {
@@ -59,14 +59,16 @@ const ContentCard: React.FC<ContentCardProps> = ({ content, onDelete }) => {
             </h3>
           </div>
           <div className="flex space-x-1 ">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onDelete}
-              className="h-8 w-8 p-0 text-red-600 dark:text-red-300 dark:hover:bg-red-900 hover:bg-red-100 transition-colors duration-300"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
+            {onDelete && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onDelete}
+                className="h-8 w-8 p-0 text-red-600 dark:text-red-300 dark:hover:bg-red-900 hover:bg-red-100 transition-colors duration-300"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            )}
           </div>
         </div>
       </CardHeader>

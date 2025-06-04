@@ -120,6 +120,7 @@ const AddContentDialog: React.FC<AddContentDialogProps> = ({ onAdd, onClose }) =
       toast.success('Success',{
         description: 'Content added successfully'
       });
+      window.location.reload();
     } catch (error) {
       toast.error("Error",{
         description: 'Failed to add content',

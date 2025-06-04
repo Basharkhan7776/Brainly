@@ -253,7 +253,7 @@ const Dashboard = () => {
             />
           </div>
 
-          <div className="flex gap-2 w-full lg:w-auto">
+          <div className="flex gap-2 w-full lg:w-auto justify-end">
             <FilterDropdown
               allTags={allTags}
               selectedTags={selectedTags}

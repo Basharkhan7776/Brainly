@@ -1,13 +1,15 @@
 import AnimatedGridPattern from "@/components/animated-grid-pattern";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowUpRight, CirclePlay } from "lucide-react";
+import { ArrowUpRight, CirclePlay, Moon, Sun } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Toaster } from "sonner";
+import { useTheme } from "@/context/themeContext";
 
 const Hero = () => {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <motion.div
@@ -24,9 +26,9 @@ const Hero = () => {
         className="absolute inset-0 w-full h-full"
       >
         <AnimatedGridPattern
-          numSquares={30}
-          maxOpacity={0.1}
-          duration={3}
+          numSquares={40}
+          maxOpacity={(theme === 'dark') ? 0.2 : 0.3}
+          duration={1}
           className={cn(
             "[mask-image:radial-gradient(500px_circle_at_center,white,transparent)]",
             "inset-x-0 h-full skew-y-12"
@@ -72,6 +74,15 @@ const Hero = () => {
           >
             <CirclePlay className="!h-5 !w-5" /> Login
           </Button>
+          <Button
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              className="aspect-square"
+              size="lg"
+              variant={"outline"}
+            >
+              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+            </Button>
         </motion.div>
       </motion.div>
     </motion.div>

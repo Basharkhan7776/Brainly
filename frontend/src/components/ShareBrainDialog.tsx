@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Copy, Share2, Check, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
+import axios from 'axios';
 
 interface ShareBrainDialogProps {
   onClose: () => void;
@@ -19,22 +19,48 @@ const ShareBrainDialog: React.FC<ShareBrainDialogProps> = ({ onClose }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  // Check if sharing is already enabled when component mounts
+  useEffect(() => {
+    const checkSharingStatus = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/brain/share`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        if (response.data.hash) {
+          setShareLink(`${window.location.origin}/shared/${response.data.hash}`);
+          setIsSharing(true);
+        }
+      } catch (error) {
+        console.error('Error checking sharing status:', error);
+      }
+    };
+
+    checkSharingStatus();
+  }, []);
+
   const generateShareLink = async () => {
     setIsGenerating(true);
     try {
-      // In real app, make API call to POST /api/v1/brain/share
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const mockLink = `https://brainly.app/shared/${Math.random().toString(36).substr(2, 9)}`;
-      setShareLink(mockLink);
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/brain/share`,
+        { share: true },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+
+      const hash = response.data.hash;
+      const fullShareLink = `${window.location.origin}/brain/${hash}`;
+      setShareLink(fullShareLink);
       setIsSharing(true);
-      toast('Success',{
-        description: 'Share link generated successfully!'
-      });
+      toast.success('Share link generated successfully!');
     } catch (error) {
-      toast.error('Error',{
-        description: 'Failed to generate share link',
-      });
+      console.error('Error generating share link:', error);
+      toast.error('Failed to generate share link');
     } finally {
       setIsGenerating(false);
     }
@@ -42,16 +68,21 @@ const ShareBrainDialog: React.FC<ShareBrainDialogProps> = ({ onClose }) => {
 
   const disableSharing = async () => {
     try {
-      // In real app, make API call to disable sharing
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/brain/share`,
+        { share: false },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
       setIsSharing(false);
       setShareLink('');
-      toast.success('Success',{
-        description: 'Sharing disabled successfully!'
-      });
+      toast.success('Sharing disabled successfully!');
     } catch (error) {
-      toast.error('Error' ,{
-        description: 'Failed to disable sharing',
-      });
+      console.error('Error disabling sharing:', error);
+      toast.error('Failed to disable sharing');
     }
   };
 
@@ -60,33 +91,30 @@ const ShareBrainDialog: React.FC<ShareBrainDialogProps> = ({ onClose }) => {
       await navigator.clipboard.writeText(shareLink);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-      toast('Copied!',{
-        description: 'Share link copied to clipboard'
-      });
+      toast.success('Share link copied to clipboard');
     } catch (error) {
-      toast.error('Error',{
-        description: 'Failed to copy link',
-      });
+      console.error('Error copying to clipboard:', error);
+      toast.error('Failed to copy link');
     }
   };
 
   return (
     <div className="space-y-6">
       <DialogHeader>
-        <DialogTitle className="text-2xl font-bold  flex items-center">
-          <Share2 className="w-6 h-6 mr-2 " />
+        <DialogTitle className="text-2xl font-bold flex items-center">
+          <Share2 className="w-6 h-6 mr-2" />
           Share Your Brain
         </DialogTitle>
       </DialogHeader>
 
       <div className="space-y-6">
         {/* Sharing Toggle */}
-        <Card className="">
+        <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <Label className="text-base font-semibold">Enable Public Sharing</Label>
-                <p className="text-sm ">
+                <p className="text-sm text-muted-foreground">
                   Allow others to view your notes collection through a public link
                 </p>
               </div>
@@ -113,7 +141,7 @@ const ShareBrainDialog: React.FC<ShareBrainDialogProps> = ({ onClose }) => {
                 <Label className="text-base font-semibold">
                   Public Share Link
                 </Label>
-                <p className="text-sm">
+                <p className="text-sm text-muted-foreground">
                   Anyone with this link can view your shared notes
                 </p>
               </div>
@@ -122,24 +150,27 @@ const ShareBrainDialog: React.FC<ShareBrainDialogProps> = ({ onClose }) => {
                 <Input
                   value={shareLink}
                   readOnly
+                  className="font-mono text-sm"
                 />
                 <Button
                   onClick={copyToClipboard}
                   variant="outline"
+                  title="Copy to clipboard"
                 >
                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 </Button>
                 <Button
                   onClick={() => window.open(shareLink, '_blank')}
                   variant="outline"
+                  title="Open in new tab"
                 >
                   <ExternalLink className="w-4 h-4" />
                 </Button>
               </div>
 
-              <div className="p-3 rounded border">
+              <div className="p-3 rounded border bg-muted/50">
                 <h4 className="font-medium mb-2">What others will see:</h4>
-                <ul className="text-sm space-y-1">
+                <ul className="text-sm space-y-1 text-muted-foreground">
                   <li>• Your username</li>
                   <li>• All your public notes and their titles</li>
                   <li>• Tags and content types</li>
@@ -154,22 +185,22 @@ const ShareBrainDialog: React.FC<ShareBrainDialogProps> = ({ onClose }) => {
         {!isSharing && (
           <Card>
             <CardContent className="p-6">
-              <h4 className="font-medium  mb-3">How sharing works:</h4>
-              <ul className="text-sm space-y-2">
+              <h4 className="font-medium mb-3">How sharing works:</h4>
+              <ul className="text-sm space-y-2 text-muted-foreground">
                 <li className="flex items-start">
-                  <div className="w-2 h-2 rounded mr-3 mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 rounded-full bg-primary/50 mr-3 mt-2 flex-shrink-0"></div>
                   Enable sharing to generate a unique public link
                 </li>
                 <li className="flex items-start">
-                  <div className="w-2 h-2 rounded mr-3 mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 rounded-full bg-primary/50 mr-3 mt-2 flex-shrink-0"></div>
                   Share the link with friends, colleagues, or on social media
                 </li>
                 <li className="flex items-start">
-                  <div className="w-2 h-2 rounded mr-3 mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 rounded-full bg-primary/50 mr-3 mt-2 flex-shrink-0"></div>
                   Others can view your notes but cannot edit or delete them
                 </li>
                 <li className="flex items-start">
-                  <div className="w-2 h-2 rounded mr-3 mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 rounded-full bg-primary/50 mr-3 mt-2 flex-shrink-0"></div>
                   You can disable sharing at any time
                 </li>
               </ul>

@@ -46,7 +46,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
           className=" relative"
         >
           <Filter className="w-4 h-4" />
-          Filter by Tags
+          Filter <p className='sm:block hidden'>by Tags</p>
           {selectedTags.length > 0 && (
             <Badge 
               variant="secondary" 
