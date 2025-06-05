@@ -44,15 +44,19 @@ const Signin = () => {
       
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
-        toast.success('Signed in successfully');
-        navigate('/dashboard');
+        toast.success('Welcome back! Redirecting to dashboard...');
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
       }
     } catch (error) {
       console.error('Signin error:', error);
       const errorMessage = axios.isAxiosError(error) 
         ? error.response?.data?.message || 'Failed to sign in'
         : 'Failed to sign in. Please try again.';
-      toast.error(errorMessage);
+      toast.error(errorMessage, {
+        description: 'Please check your username and password'
+      });
     } finally {
       setIsLoading(false);
     }

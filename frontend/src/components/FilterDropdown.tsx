@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Filter, X } from 'lucide-react';
+import { Filter} from 'lucide-react';
 
 interface FilterDropdownProps {
   allTags: string[];

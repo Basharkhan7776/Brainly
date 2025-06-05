@@ -1,0 +1,6 @@
+{
+  "projects": {},
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/src/index.ts" }
+  ]
+}

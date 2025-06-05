@@ -50,17 +50,20 @@ const Signup = () => {
         password: data.password,
       });
       
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        toast.success('Account created successfully');
-        navigate('/signin');
+      if (response.data.userId) {
+        toast.success('Account created successfully! Redirecting to login...');
+        setTimeout(() => {
+          navigate('/signin');
+        }, 1500);
       }
     } catch (error) {
       console.error('Signup error:', error);
       const errorMessage = axios.isAxiosError(error) 
         ? error.response?.data?.message || 'Failed to sign up'
         : 'Failed to sign up. Please try again.';
-      toast.error(errorMessage);
+      toast.error(errorMessage, {
+        description: 'Please check your credentials and try again'
+      });
     } finally {
       setIsLoading(false);
     }
