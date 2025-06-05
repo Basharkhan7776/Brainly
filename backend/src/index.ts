@@ -373,4 +373,4 @@ app.get("/api/v1/brain/:shareLink", async (req, res) => {
     }
 });
 
-app.listen(3000);
+export default app;
