@@ -10,6 +10,7 @@ import {
   Link as LinkIcon
 } from 'lucide-react';
 import { Tweet } from 'react-tweet'
+import ReactMarkdown from 'react-markdown';
 
 
 interface Content {
@@ -18,6 +19,7 @@ interface Content {
   link: string;
   title: string;
   tags: string[];
+  content?: string;
 }
 
 interface ContentPreviewProps {
@@ -81,21 +83,14 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({ content }) => {
     if (content.type === 'document') {
       // For documents, show a markdown-like preview
       return (
-        <Card className="bg-gradient-to-br">
+        <Card className="">
           <CardContent className="p-4 overflow-y-auto">
             <div className="prose max-w-none">
               <h2 className="text-xl font-semibold mb-4">{content.title}</h2>
               <div className="p-4 rounded-lg border">
-                <p className=" leading-relaxed">
-                  This is a preview of the document content. In a real implementation,
-                  this would render the actual markdown content or document preview.
-                </p>
-                <div className="mt-4 p-3  rounded border-l-4 ">
-                  <p className="text-sm  italic">
-                    "Document content would be rendered here with proper markdown formatting,
-                    code blocks, images, and other rich content elements."
-                  </p>
-                </div>
+                <ReactMarkdown>
+                  {content.content}
+                </ReactMarkdown>
               </div>
             </div>
           </CardContent>
@@ -127,7 +122,7 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({ content }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-start gap-2">
         <div className="flex items-center space-x-3">
@@ -138,19 +133,12 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({ content }) => {
             <h1 className="text-xl font-bold">{content.title}</h1>
             <p className="text-sm mt-1 break-words whitespace-pre-line">
               {content.link.length > 40
-              ? content.link.slice(0, 37) + '...'
-              : content.link}
+                ? content.link.slice(0, 37) + '...'
+                : content.link}
             </p>
           </div>
         </div>
-        {content.type != 'document' &&
-          <Button
-            onClick={() => window.open(content.link, '_blank')}
-            variant={"outline"}
-          >
-            <ExternalLink className="w-4 h-4" />
-          </Button>
-        }
+
 
       </div>
 
@@ -167,10 +155,19 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({ content }) => {
       </div>
 
       {/* Content Preview */}
-      <div className="space-y-4">
+      <div className="space-y-2">
         <h2 className="text-lg font-semibold">Preview</h2>
         {renderEmbeddedContent()}
       </div>
+      {content.type != 'document' &&
+        <Button
+          onClick={() => window.open(content.link, '_blank')}
+          variant={"outline"}
+          className="w-full"
+        >
+          <ExternalLink className="w-4 h-4" />
+        </Button>
+      }
     </div>
   );
 };

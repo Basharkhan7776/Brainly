@@ -9,11 +9,14 @@ import {
   Twitter,
   Link as LinkIcon,
   Trash2,
-  Eye
+  Eye,
+  Pencil
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import ContentPreview from './ContentPreview';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import ReactMarkdown from 'react-markdown';
+import EditContentDialog from './EditContentDialog';
 
 interface Content {
   _id: string;
@@ -78,8 +81,9 @@ const ContentCard: React.FC<ContentCardProps> = ({ content, onDelete }) => {
           {content.type === 'document' && content.content ? (
             <ScrollArea className="h-16 rounded border p-2">
               <div className="text-sm prose-sm prose-gray">
-                {content.content.substring(0, 100)}
-                {content.content.length > 200 && '...'}
+                <ReactMarkdown>
+                  {content.content.substring(0, 100) + (content.content.length > 200 ? '...' : '')}
+                </ReactMarkdown>
               </div>
             </ScrollArea>
           ) : (
@@ -116,7 +120,11 @@ const ContentCard: React.FC<ContentCardProps> = ({ content, onDelete }) => {
                 Preview
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto [&::-webkit-scrollbar]:w-2
+  [&::-webkit-scrollbar-track]:rounded-full
+  [&::-webkit-scrollbar-track]:bg-primary-foreground
+  [&::-webkit-scrollbar-thumb]:rounded-full
+  [&::-webkit-scrollbar-thumb]:bg-primary/40">
               <DialogTitle>Content Preview</DialogTitle>
               <DialogDescription>
                 View the full content of this item
@@ -135,6 +143,24 @@ const ContentCard: React.FC<ContentCardProps> = ({ content, onDelete }) => {
               <ExternalLink className="w-4 h-4" />
             </Button>
           )}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className={`bg-gradient-to-r ${getGradient()} text-white border-0 hover:opacity-90`}
+              >
+                <Pencil className="w-4 h-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto [&::-webkit-scrollbar]:w-2
+  [&::-webkit-scrollbar-track]:rounded-full
+  [&::-webkit-scrollbar-track]:bg-primary-foreground
+  [&::-webkit-scrollbar-thumb]:rounded-full
+  [&::-webkit-scrollbar-thumb]:bg-primary/40">
+            <EditContentDialog content={content} />
+            </DialogContent>
+          </Dialog>
         </div>
       </CardFooter>
     </Card>

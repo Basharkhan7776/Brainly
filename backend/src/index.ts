@@ -209,6 +209,51 @@ app.get("/api/v1/content", userMiddleware, async (req: Request, res: Response): 
     }
 });
 
+app.put("/api/v1/content", userMiddleware, async (req: Request, res: Response): Promise<void> => {
+    const { contentId, title, content, link, type, tags } = req.body;
+
+    if (!contentId || !title || !type) {
+        res.status(400).json({
+            message: "contentId, title, and type are required"
+        });
+        return;
+    }
+
+    try {
+        const existingContent = await ContentModel.findOne({
+            _id: contentId,
+            userId: req.userId
+        });
+
+        if (!existingContent) {
+            res.status(404).json({
+                message: "Content not found or you don't have permission to edit it"
+            });
+            return;
+        }
+
+        existingContent.title = title;
+        existingContent.content = content;
+        existingContent.link = link;
+        existingContent.type = type;
+        existingContent.tags = Array.isArray(tags)
+            ? tags.map((tag: unknown) => String(tag).trim()).filter((tag: string) => tag.length > 0)
+            : [];
+
+        await existingContent.save();
+
+        res.json({
+            message: "Content updated successfully",
+            content: existingContent
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error updating content",
+            error: error instanceof Error ? error.message : "Unknown error"
+        });
+    }
+});
+
 app.delete("/api/v1/content", userMiddleware, async (req, res) => {
     const contentId = req.body.contentId;
 
