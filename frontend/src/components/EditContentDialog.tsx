@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { X, Plus, FileText, Youtube, Twitter, Link as LinkIcon, Bold, Italic, Underline } from 'lucide-react';
+import { X, Plus, Bold, Italic, Underline } from 'lucide-react';
 import { toast } from "sonner";
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import axios from 'axios';
