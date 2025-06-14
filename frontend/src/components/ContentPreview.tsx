@@ -84,7 +84,7 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({ content }) => {
       // For documents, show a markdown-like preview
       return (
         <Card className="">
-          <CardContent className="p-4 overflow-y-auto">
+          <CardContent className="overflow-y-auto">
             <div className="prose max-w-none">
               <h2 className="text-xl font-semibold mb-4">{content.title}</h2>
               <div className="p-4 rounded-lg border">
@@ -101,7 +101,7 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({ content }) => {
     // For regular links, show a preview card
     return (
       <Card className="bg-gradient-to-br ">
-        <CardContent className="p-6">
+        <CardContent >
           <div className="flex items-center space-x-3 mb-4">
             <div className="w-10 h-10  rounded-full flex items-center justify-center">
               <LinkIcon className="w-5 h-5" />
@@ -111,11 +111,14 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({ content }) => {
               <div className="text-sm">{new URL(content.link).hostname}</div>
             </div>
           </div>
-          <h3 className="text-lg font-semibold mb-2">{content.title}</h3>
-          <p className=" mb-4">
-            This link contains valuable information related to your notes and research.
-          </p>
-          <div className="text-sm">Click to open in new tab</div>
+          <iframe
+            src={content.link}
+            className="w-full h-full rounded"
+            frameBorder={0}
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+            title="Embedded Link Preview"
+          />
         </CardContent>
       </Card>
     );

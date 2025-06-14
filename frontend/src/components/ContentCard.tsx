@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -33,6 +33,13 @@ interface ContentCardProps {
 }
 
 const ContentCard: React.FC<ContentCardProps> = ({ content, onDelete }) => {
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  const handleContentUpdated = () => {
+    // Trigger a refresh of the content list
+    window.location.reload();
+  };
+
   const getIcon = () => {
     switch (content.type) {
       case 'document':
@@ -143,7 +150,7 @@ const ContentCard: React.FC<ContentCardProps> = ({ content, onDelete }) => {
               <ExternalLink className="w-4 h-4" />
             </Button>
           )}
-          <Dialog>
+          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
             <DialogTrigger asChild>
               <Button
                 variant="outline"
@@ -153,12 +160,16 @@ const ContentCard: React.FC<ContentCardProps> = ({ content, onDelete }) => {
                 <Pencil className="w-4 h-4" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto [&::-webkit-scrollbar]:w-2
+            <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto [&::-webkit-scrollbar]:w-2
   [&::-webkit-scrollbar-track]:rounded-full
   [&::-webkit-scrollbar-track]:bg-primary-foreground
   [&::-webkit-scrollbar-thumb]:rounded-full
   [&::-webkit-scrollbar-thumb]:bg-primary/40">
-            <EditContentDialog content={content} />
+              <EditContentDialog 
+                content={content} 
+                onClose={() => setIsEditDialogOpen(false)}
+                onContentUpdated={handleContentUpdated}
+              />
             </DialogContent>
           </Dialog>
         </div>

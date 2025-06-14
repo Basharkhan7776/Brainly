@@ -1,19 +1,17 @@
-
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import { X, Plus, FileText, Youtube, Twitter, Link as LinkIcon, Bold, Italic, Underline } from 'lucide-react';
-import { toast } from "sonner"
+import { toast } from "sonner";
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-
-
+import axios from 'axios';
 
 interface Content {
+    _id: string;
     type: 'document' | 'tweet' | 'youtube' | 'link';
     link: string;
     title: string;
@@ -21,22 +19,19 @@ interface Content {
     content?: string;
 }
 
-export default function EditContentDialog({ content }: { content: Content }) {
-    const [type, setType] = useState<Content['type']>('document');
-    const [link, setLink] = useState('');
-    const [title, setTitle] = useState('');
-    const [editContent, setContent] = useState('');
-    const [tags, setTags] = useState<string[]>([]);
+interface EditContentDialogProps {
+    content: Content;
+    onClose: () => void;
+    onContentUpdated: () => void;
+}
+
+export default function EditContentDialog({ content, onClose, onContentUpdated }: EditContentDialogProps) {
+    const [link, setLink] = useState(content.link);
+    const [title, setTitle] = useState(content.title);
+    const [editContent, setEditContent] = useState(content.content || '');
+    const [tags, setTags] = useState<string[]>(content.tags);
     const [newTag, setNewTag] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-
-    const contentTypes = [
-        { value: 'document', label: 'Document', icon: FileText, color: 'text-gray-600' },
-        { value: 'youtube', label: 'YouTube', icon: Youtube, color: 'text-gray-600' },
-        { value: 'tweet', label: 'Tweet', icon: Twitter, color: 'text-gray-600' },
-        { value: 'link', label: 'Link', icon: LinkIcon, color: 'text-gray-600' }
-    ];
 
     const addTag = () => {
         if (newTag.trim() && !tags.includes(newTag.trim())) {
@@ -75,7 +70,7 @@ export default function EditContentDialog({ content }: { content: Content }) {
         }
 
         const newText = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
-        setContent(newText);
+        setEditContent(newText);
 
         // Set cursor position after formatting
         cursorPosition = start + formattedText.length;
@@ -91,8 +86,8 @@ export default function EditContentDialog({ content }: { content: Content }) {
         e.preventDefault();
 
         // For document type, content is required; for others, link is required
-        if ((type === 'document' && !editContent.trim()) ||
-            (type !== 'document' && !link.trim()) ||
+        if ((content.type === 'document' && !editContent.trim()) ||
+            (content.type !== 'document' && !link.trim()) ||
             !title.trim()) {
             toast.error('Validation Error', {
                 description: 'Please fill in all required fields'
@@ -103,64 +98,54 @@ export default function EditContentDialog({ content }: { content: Content }) {
         setIsSubmitting(true);
 
         try {
-            await onAdd({
-                type,
-                link: type === 'document' ? '' : link.trim(),
-                title: title.trim(),
-                tags: tags,
-                content: type === 'document' ? content.trim() : undefined
-            });
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
 
-            toast.success('Success', {
-                description: 'Content added successfully'
-            });
-            window.location.reload();
+            const response = await axios.put(
+                `${import.meta.env.VITE_BACKEND_URL}/api/v1/content`,
+                {
+                    contentId: content._id,
+                    type: content.type,
+                    link: content.type === 'document' ? '' : link.trim(),
+                    title: title.trim(),
+                    tags: tags,
+                    content: content.type === 'document' ? editContent.trim() : undefined
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (response.data) {
+                toast.success('Content updated successfully');
+                onContentUpdated();
+                onClose();
+            }
         } catch (error) {
-            toast.error("Error", {
-                description: 'Failed to add content',
+            console.error('Error updating content:', error);
+            toast.error('Failed to update content', {
+                description: 'Please try again later'
             });
         } finally {
             setIsSubmitting(false);
         }
     };
 
-
     return (
-        <div className="space-y-6 max-h-screen overflow-y-auto">
+        <div className=" space-y-6 max-h-screen overflow-y-auto">
             <DialogHeader>
                 <DialogTitle className="text-2xl font-bold">
-                    Add New Content
+                    Edit Content
                 </DialogTitle>
             </DialogHeader>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Content Type Selection */}
-                <div className="space-y-3">
-                    <Label className="text-base font-semibold">Content Type</Label>
-                    <div className="grid grid-cols-2 gap-3 p-1">
-                        {contentTypes.map((contentType) => {
-                            const Icon = contentType.icon;
-                            return (
-                                <Card
-                                    key={contentType.value}
-                                    className={`cursor-pointer h-12 transition-all duration-200 flex items-center justify-center ${type === contentType.value
-                                            ? 'ring-2 ring-neutral-500 bg-neutral-50 dark:bg-neutral-800 dark:ring-neutral-400'
-                                            : 'hover:bg-neutral-50 dark:hover:bg-neutral-800'
-                                        }`}
-                                    onClick={() => setType(contentType.value as Content['type'])}
-                                >
-                                    <CardContent className="p-1 flex gap-2 items-center">
-                                        <Icon className={`w-6 h-6 ${contentType.color}`} />
-                                        <div className="font-medium">{contentType.label}</div>
-                                    </CardContent>
-                                </Card>
-                            );
-                        })}
-                    </div>
-                </div>
-
                 {/* Link Input - Hidden for document type */}
-                {type !== 'document' && (
+                {content.type !== 'document' && (
                     <div className="space-y-2">
                         <Label htmlFor="link" className="text-base font-semibold">
                             URL <span className="text-red-500">*</span>
@@ -191,7 +176,7 @@ export default function EditContentDialog({ content }: { content: Content }) {
                 </div>
 
                 {/* Document Content Area - Only shown for document type */}
-                {type === 'document' && (
+                {content.type === 'document' && (
                     <div className="space-y-2">
                         <div className="flex justify-between items-center">
                             <Label htmlFor="content" className="text-base font-semibold">
@@ -212,8 +197,8 @@ export default function EditContentDialog({ content }: { content: Content }) {
                         <Textarea
                             id="content"
                             placeholder="Write your content in Markdown format..."
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
+                            value={editContent}
+                            onChange={(e) => setEditContent(e.target.value)}
                             required
                         />
                         <p className="text-xs">
@@ -277,11 +262,10 @@ export default function EditContentDialog({ content }: { content: Content }) {
                         type="submit"
                         disabled={isSubmitting}
                     >
-                        {isSubmitting ? 'Adding...' : 'Add Content'}
+                        {isSubmitting ? 'Saving...' : 'Save Changes'}
                     </Button>
                 </div>
             </form>
         </div>
     );
-};
 }

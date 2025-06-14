@@ -43,7 +43,6 @@ const Dashboard = () => {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
-        console.log('Fetched content:', response.data.content);
         setContent(response.data.content as Content[]);
 
         // Extract all unique tags
