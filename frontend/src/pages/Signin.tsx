@@ -17,6 +17,9 @@ import { motion } from "framer-motion";
 import signinImg from "@/assets/signinImg.png";
 import { Toaster, toast } from "sonner";
 import axios from 'axios';
+import { Eye, EyeOff } from "lucide-react";
+import Footer from '@/components/Footer';
+
 
 const formSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters long"),
@@ -28,6 +31,7 @@ type FormData = z.infer<typeof formSchema>;
 const Signin = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -41,7 +45,7 @@ const Signin = () => {
     setIsLoading(true);
     try {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/signin`, data);
-      
+
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         toast.success('Welcome back! Redirecting to dashboard...');
@@ -51,7 +55,7 @@ const Signin = () => {
       }
     } catch (error) {
       console.error('Signin error:', error);
-      const errorMessage = axios.isAxiosError(error) 
+      const errorMessage = axios.isAxiosError(error)
         ? error.response?.data?.message || 'Failed to sign in'
         : 'Failed to sign in. Please try again.';
       toast.error(errorMessage, {
@@ -62,7 +66,7 @@ const Signin = () => {
     }
   };
 
-  return (
+  return (<>
     <motion.div
       className="h-screen flex items-center justify-center overflow-hidden"
       initial={{ opacity: 0 }}
@@ -78,7 +82,7 @@ const Signin = () => {
           transition={{ duration: 0.8, delay: 0.1 }}
         >
           <p className="mt-4 text-xl font-bold tracking-tight">
-            Log in to <a onClick={() => navigate("/")} className="cursor-pointer">Brainly</a>
+            Log in to <a onClick={() => navigate("/")} className="underline cursor-pointer">Brainly</a>
           </p>
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
@@ -127,13 +131,23 @@ const Signin = () => {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input
-                            type="password"
-                            placeholder="Enter your password"
-                            className="w-full"
-                            disabled={isLoading}
-                            {...field}
-                          />
+                          <div className="relative">
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              placeholder="Create a password"
+                              className="w-full pr-10"
+                              disabled={isLoading}
+                              {...field}
+                            />
+                            <button
+                              type="button"
+                              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400"
+                              tabIndex={-1}
+                              onClick={() => setShowPassword((prev) => !prev)}
+                            >
+                              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                            </button>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -180,6 +194,8 @@ const Signin = () => {
         </motion.div>
       </div>
     </motion.div>
+    <Footer/>
+    </>
   );
 };
 

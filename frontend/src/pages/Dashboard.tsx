@@ -13,6 +13,7 @@ import { Toaster, toast } from 'sonner';
 import axios from 'axios';
 import { useTheme } from '@/context/themeContext';
 import { Toggle } from '@/components/ui/toggle';
+import Footer from '@/components/Footer';
 
 
 interface Content {
@@ -204,7 +205,7 @@ const Dashboard = () => {
     }
   };
 
-  return (
+  return (<>
     <div className="min-h-screen ">
       <Toaster />
       <div className="fixed -z-10 h-full w-full rounded-lg overflow-hidden">
@@ -343,6 +344,8 @@ const Dashboard = () => {
         </DialogContent>
       </Dialog>
     </div>
+    <Footer/>
+  </>
   );
 };
 

@@ -6,12 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Toaster } from "sonner";
 import { useTheme } from "@/context/themeContext";
+import Footer from "@/components/Footer";
 
 const Hero = () => {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
 
-  return (
+  return (<>
     <motion.div
       className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden"
       initial={{ opacity: 0 }}
@@ -75,17 +76,19 @@ const Hero = () => {
             <CirclePlay className="!h-5 !w-5" /> Login
           </Button>
           <Button
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-              className="aspect-square"
-              size="lg"
-              variant={"outline"}
-            >
-              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-            </Button>
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="aspect-square"
+            size="lg"
+            variant={"outline"}
+          >
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          </Button>
         </motion.div>
       </motion.div>
     </motion.div>
+    <Footer />
+  </>
   );
 };
 

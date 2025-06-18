@@ -70,14 +70,25 @@ const ContentCard: React.FC<ContentCardProps> = ({ content, onDelete }) => {
           </div>
           <div className="flex space-x-1 ">
             {onDelete && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onDelete}
-                className="h-8 w-8 p-0 text-red-600 dark:text-red-300 dark:hover:bg-red-900 hover:bg-red-100 transition-colors duration-300"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    // onClick={onDelete}
+                    className="h-8 w-8 p-0 text-red-600 dark:text-red-300 dark:hover:bg-red-900 hover:bg-red-100 transition-colors duration-300"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogTitle>Delete Content</DialogTitle>
+                  <div className='flex flex-wrap justify-between items-center gap-2'>
+                    <p>Confirm to delete this content?</p>
+                    <Button variant={"destructive"} onClick={onDelete}><Trash2 /> Delete</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             )}
           </div>
         </div>
@@ -165,8 +176,8 @@ const ContentCard: React.FC<ContentCardProps> = ({ content, onDelete }) => {
   [&::-webkit-scrollbar-track]:bg-primary-foreground
   [&::-webkit-scrollbar-thumb]:rounded-full
   [&::-webkit-scrollbar-thumb]:bg-primary/40">
-              <EditContentDialog 
-                content={content} 
+              <EditContentDialog
+                content={content}
                 onClose={() => setIsEditDialogOpen(false)}
                 onContentUpdated={handleContentUpdated}
               />

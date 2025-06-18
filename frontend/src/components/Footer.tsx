@@ -6,12 +6,12 @@ export default function Footer() {
 
     return (
         <footer className="py-12 bg-secondary/30">
-            <div className="container-custom">
-                <div>
+            <div className="w-full flex items-center justify-center px-4">
+                <div className="w-[700px]">
                     <div className="flex flex-col md:flex-row justify-between items-center">
                         <div className="mb-4 md:mb-0">
                             <p className="text-muted-foreground text-sm">
-                                © {currentYear} <a href="https://basharkhan.in">basharkhan.in</a>. All rights reserved.
+                                © {currentYear} <a href="https://basharkhan.in" className="text-primary font-semibold" target="_blank" rel="noopener noreferrer">basharkhan.in</a>. All rights reserved.
                             </p>
                         </div>
 
