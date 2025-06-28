@@ -37,7 +37,7 @@ if (cluster.isPrimary) {
 
     app.get("/", (req, res) => {
         res.json({
-            message: "Brainly backend"
+            message: `Brainly backend process: ${process.pid}`
         });
     });
 
