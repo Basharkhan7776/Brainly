@@ -135,7 +135,7 @@ export default function ShareBrain() {
                   key={`content-${item._id}`}
                   variants={itemVariants}
                 >
-                  <ContentCard content={item} />
+                  <ContentCard content={item} shared/>
                 </motion.div>
               ))}
 

@@ -30,9 +30,10 @@ interface Content {
 interface ContentCardProps {
   content: Content;
   onDelete?: () => void;
+  shared?: boolean;
 }
 
-const ContentCard: React.FC<ContentCardProps> = ({ content, onDelete }) => {
+const ContentCard: React.FC<ContentCardProps> = ({ content, onDelete, shared = false }) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const handleContentUpdated = () => {
@@ -161,28 +162,29 @@ const ContentCard: React.FC<ContentCardProps> = ({ content, onDelete }) => {
               <ExternalLink className="w-4 h-4" />
             </Button>
           )}
-          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className={`bg-gradient-to-r ${getGradient()} text-white border-0 hover:opacity-90`}
-              >
-                <Pencil className="w-4 h-4" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto [&::-webkit-scrollbar]:w-2
+          {!shared && (
+            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`bg-gradient-to-r ${getGradient()} text-white border-0 hover:opacity-90`}
+                >
+                  <Pencil className="w-4 h-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto [&::-webkit-scrollbar]:w-2
   [&::-webkit-scrollbar-track]:rounded-full
   [&::-webkit-scrollbar-track]:bg-primary-foreground
   [&::-webkit-scrollbar-thumb]:rounded-full
   [&::-webkit-scrollbar-thumb]:bg-primary/40">
-              <EditContentDialog
-                content={content}
-                onClose={() => setIsEditDialogOpen(false)}
-                onContentUpdated={handleContentUpdated}
-              />
-            </DialogContent>
-          </Dialog>
+                <EditContentDialog
+                  content={content}
+                  onClose={() => setIsEditDialogOpen(false)}
+                  onContentUpdated={handleContentUpdated}
+                />
+              </DialogContent>
+            </Dialog>)}
         </div>
       </CardFooter>
     </Card>
