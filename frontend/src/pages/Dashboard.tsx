@@ -108,13 +108,6 @@ const Dashboard = () => {
               link: 'https://x.com/_Bashar_khan_/status/1926883300410306980',
               title: 'Insights on Personal Knowledge Management',
               tags: ['productivity', 'PKM']
-            },
-            {
-              _id: "8",
-              type: 'link' as const,
-              link: 'https://medium.com/article-about-note-taking',
-              title: 'Best Note-Taking Methods',
-              tags: ['productivity', 'creativity']
             }
           ]
         };
